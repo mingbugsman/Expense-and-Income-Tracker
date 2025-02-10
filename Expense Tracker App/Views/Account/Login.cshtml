@@ -1,0 +1,37 @@
+﻿@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Identity
+@model Expense_Tracker_App.Models.AccountViewModels.LoginViewModel
+@inject SignInManager<ApplicationUser> SignInManager
+
+
+@{
+    ViewData["Title"] = "Log in";
+}
+
+<div class="row">
+    <div class="col-md-7">
+        <div class="p-5" style="background-color:#212b36">
+            <form asp-route-returnurl="@ViewData["ReturnUrl"]" asp-page="/Account/Login method="post">
+                <h4>Use a local account to log in.</h4>
+
+
+                <div class="mb-3">
+                    @*syncfunction*@
+                    <ejs-textbox id="email" ejs-for="Email"
+                    placeholder="Email" floatLabelType="Always"></ejs-textbox>
+                    <span asp-validation-for="Email" class="text-danger fs-6"></span>
+
+                </div>
+                <div class="mb-3">
+                    @*Password*@
+                    @*Syncfunction*@
+
+                    <ejs-textbox type="password" ejs-for="Password" id="password"
+                    placeholder="Password" floatLabelType="Always"></ejs-textbox>
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <ejs-button id="submit" content="Submit" type="Submit" cssClass="e-success"></ejs-button>
+            </form>
+        </div>
+    </div>
+</div>

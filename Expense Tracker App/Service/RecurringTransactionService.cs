@@ -31,7 +31,7 @@ public class RecurringTransactionService : BackgroundService
                     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
                     var now = DateTime.UtcNow.Date;
-                    var transactionsToAdd = dbContext.RecurringTransaction
+                    var transactionsToAdd = dbContext.RecurringTransactions
                         .Where(rt => rt.StartDate <= now && (!rt.EndDate.HasValue || rt.EndDate >= now))
                         .ToList();
 

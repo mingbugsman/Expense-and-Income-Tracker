@@ -6,31 +6,40 @@ namespace Expense_Tracker_App.Models
     public class RecurringTransaction
     {
         [Key]
-        public int Id { get; set; }
+        public int RecurringTransactionId { get; set; }
 
 
         [Column(TypeName="decimal(18,2)")]
         public decimal Amount { get; set; }
 
         [Required]
-        public DateTime StartDate { get; set; }
+        public DateTime StartDate { get; set; }= DateTime.Now;
 
-        public DateTime? EndDate { get; set; }
+        public DateTime? EndDate { get; set; } = DateTime.Now.AddDays(30);
 
         [Required]
-        public string Frequency { get; set; } // e.g., "Monthly", "Weekly"
+        public string Frequency { get; set; } = "Monthly"; // e.g., "Monthly", "Weekly"
 
         [Required]
         public int CategoryId { get; set; }
 
         [ForeignKey("CategoryId")]
-        public virtual Category? Category { get; set; }
+        public Category? Category { get; set; }
+            
 
-        [Required]
-        public string UserId { get; set; }
+        public string? UserId { get; set; }
 
         [ForeignKey("UserId")]
         public virtual ApplicationUser? User { get; set; }
+
+        [NotMapped]
+        public string? FormattedAmount
+        {
+            get
+            {
+                return ((Category == null || Category.Type == "Expense") ? "-" : "+") + Amount.ToString("n2");
+            }
+        }
     }
 
 }

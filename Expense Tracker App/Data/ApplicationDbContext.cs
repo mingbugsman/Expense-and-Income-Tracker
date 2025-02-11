@@ -14,6 +14,8 @@ namespace Expense_Tracker_App.Data
 
         public DbSet<Budget> Budgets { get; set; }
 
+        public DbSet<RecurringTransaction> RecurringTransactions { get; set; }
+
         public DbSet<NotificationLog> NotificationLogs { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -90,9 +92,6 @@ namespace Expense_Tracker_App.Data
 
 
         }
-        public DbSet<Expense_Tracker_App.Models.RecurringTransaction> RecurringTransaction { get; set; } = default!;
-
-      
     }   
     
 }

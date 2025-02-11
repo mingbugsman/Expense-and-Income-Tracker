@@ -74,13 +74,20 @@ namespace Expense_Tracker_App.Controllers
                                                     "Budget_StartDate,Budget_EndDate,UserId,CategoryId")] 
                                                     Budget budget)
         {
+            budget.UserId = GetUserId(); // Đảm bảo chỉ thao tác với dữ liệu của user hiện tại
             if (!ModelState.IsValid)
             {
+                foreach (var error in ModelState)
+                {
+                    foreach (var subError in error.Value.Errors)
+                    {
+                        Console.WriteLine($"Field: {error.Key}, Error: {subError.ErrorMessage}");
+                    }
+                }
                 PopulateCategories();
                 return View(budget);
             }
 
-            budget.UserId = GetUserId(); // Đảm bảo chỉ thao tác với dữ liệu của user hiện tại
 
             if (budget.BudgetID == 0)
                 _context.Add(budget);

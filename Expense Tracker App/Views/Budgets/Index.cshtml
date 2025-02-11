@@ -1,59 +1,48 @@
 ﻿@model IEnumerable<Expense_Tracker_App.Models.Budget>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["PageTitle"] = "Budgets";
+    ViewData["PageActionText"] = "+ New Budget";
+    ViewData["PageActionUrl"] = "/budgets/CreateOrEdit";
 }
+<div class="row">
+    <div class="col-md-7">
+        <ejs-grid id="transactions" dataSource="@Model" gridLines="None"
+                  allowSorting="true" allowPaging="true">
+            <e-grid-pagesettings pageSize="10"></e-grid-pagesettings>
+            <e-grid-columns>
+                <e-grid-column headerText="Category" field="Category.Title"></e-grid-column>
+                <e-grid-column headerText="Date" field="Budget_StartDate" width="110px"
+                               type="date" format="MMM-dd-yy" textAlign="Left"></e-grid-column>
+                <e-grid-column headerText="Date" field="Budget_EndDate" width="110px"
+                               type="date" format="MMM-dd-yy" textAlign="Left"></e-grid-column>
+                <e-grid-column headerText="BudgetAmount" field="FormattedAmount" textAlign="Right" width="110px"></e-grid-column>
+                <e-grid-column headerText="Actions" template="#actionColumnTemplate" width="100px"></e-grid-column>
+            </e-grid-columns>
+        </ejs-grid>
+    </div>
+    <div class="col-md-5">
+        <div class="widget h-100 d-flex justify-content-center align-items-center">
+            <i class="fa-solid fa-shapes fa-2"></i>
+        </div>
+    </div>
+</div>
 
-<h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.BudgetAmount)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Budget_StartDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Budget_EndDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Category)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.BudgetAmount)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Budget_StartDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Budget_EndDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.User.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Category.CategoryId)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.BudgetID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.BudgetID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.BudgetID">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+
+
+@* template action *@
+<script id="actionColumnTemplate" type="text/x-template">
+    <div class="d-flex flex-row justify-content-start">
+        <a class="btn btn-sm no-a-decoration" href="/budgets/CreateOrEdit/${BudgetId}">
+            <i class="fa-solid fa-pen fa-lg"></i>
+        </a>
+        <form action="/budgets/DeleteConfirmed/${BudgetId}" method="post">
+    @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-sm btn-link no-a-decoration"
+            onclick="return confirm(&quot;Are sure to delete this record?&quot;)">
+                <i class="fa-solid fa-trash-can fa-lg text-danger"></i>
+            </button>
+        </form>
+    </div>
+</script>

@@ -29,50 +29,54 @@
                     </div>
                 </div>
             </nav>
-            <div class="container mt-5">
-                <div class="row justify-content-center">
-                    <div class="col-md-10">
-                        <main role="main" class="pb-3">
-                            @if (ViewData["isDashBoard"] == null)
-                            {
-                                <div class="row">
-                                    <div class="col-md-7">
-                                        <div class="d-flex flex-column mb-5">
-                                            <div class="d-flex mb-1">
-                                                <div class="flex-grow-1">
-                                                    <h3 class="fw-bold">@ViewData["PageTitle"]</h3>
+            <div class="main-content">
+                <div class="container mt-5">
+                    <div class="row justify-content-center">
+                        <div class="col-md-10">
+                            <main role="main" class="pb-3">
+                                @if (ViewData["isDashBoard"] == null)
+                                {
+                                    <div class="row">
+                                        <div class="col-md-7">
+                                            <div class="d-flex flex-column mb-5">
+                                                <div class="d-flex mb-1">
+                                                    <div class="flex-grow-1">
+                                                        <h3 class="fw-bold">@ViewData["PageTitle"]</h3>
+                                                    </div>
+                                                    <div>
+                                                        @if (ViewData["PageActionText"] != null)
+                                                        {
+                                                            <a class="btn btn-success" href="@ViewData["PageActionUrl"]"> @ViewData["PageActionText"]</a>
+                                                        }
+                                                    </div>
                                                 </div>
-                                                <div>
-                                                    @if (ViewData["PageActionText"] != null)
-                                                    {
-                                                        <a class="btn btn-success" href="@ViewData["PageActionUrl"]"> @ViewData["PageActionText"]</a>
-                                                    }
-                                                </div>
+                                                <ejs-breadcrumb id="breadcrumb"
+                                                                separatorTemplate="@Html.Raw("<span class='fa-solid fa-angle-right'></span>")"></ejs-breadcrumb>
                                             </div>
-                                            <ejs-breadcrumb id="breadcrumb"
-                                                            separatorTemplate="@Html.Raw("<span class='fa-solid fa-angle-right'></span>")"></ejs-breadcrumb>
                                         </div>
                                     </div>
-                                </div>
-                            }
+                                }
 
-                            @RenderBody()
-                        </main>
+                                @RenderBody()
+                            </main>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     } else {
-        <div class="container mt-5">
+        <div class="main-content">
+            <div class="container mt-5">
                 <div class="row justify-content-center">
                     <div class="col-md-10">
                         <main role="main" class="pb-3">
-                        <partial name="_LoginPartial" />
-                        @RenderBody()
+                            <partial name="_LoginPartial" />
+                            @RenderBody()
                         </main>
                     </div>
                 </div>
 
+            </div>
         </div>
     }
    

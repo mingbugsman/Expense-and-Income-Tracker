@@ -14,14 +14,14 @@ namespace Expense_Tracker_App.Models
         public decimal BudgetAmount { get; set; }
 
         [Column(TypeName = "DATETIME")]
-        public DateTime Budget_StartDate { get; set; }
+        public DateTime Budget_StartDate { get; set; } = DateTime.Now;
 
         [Column(TypeName = "DATETIME")]
-        public DateTime Budget_EndDate { get; set; }
+        public DateTime Budget_EndDate { get; set; } = DateTime.Now.AddDays(30);
 
 
         // Thêm khóa ngoại đến ApplicationUser
-        public string UserId { get; set; }
+        public string? UserId { get; set; }
 
         [ForeignKey("UserId")]
         public virtual ApplicationUser? User { get; set; }
@@ -30,7 +30,13 @@ namespace Expense_Tracker_App.Models
 
         [ForeignKey("CategoryId")]
         public Category? Category { get; set; }
-
-
+        [NotMapped]
+        public string? FormattedAmount
+        {
+            get
+            {
+                return ((Category == null || Category.Type == "Expense") ? "-" : "+") + BudgetAmount.ToString("n2");
+            }
+        }
     }
 }

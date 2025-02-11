@@ -88,7 +88,7 @@ namespace Expense_Tracker_App.Controllers
 
             // Gộp dữ liệu của 7 ngày qua
             string[] last7Days = Enumerable.Range(0, 7)
-                .Select(i => DateTime.Today.AddDays(-i).ToString("yyyy-MM-dd"))
+                .Select(i => DateTime.Today.AddDays(i).ToString("dd-MMM"))
                 .ToArray();
 
             ViewBag.SplineChartData = from day in last7Days

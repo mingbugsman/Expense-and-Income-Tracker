@@ -28,9 +28,8 @@ namespace Expense_Tracker_App.Controllers
         public async Task<IActionResult> Index()
         {
             var userId = GetUserId();
-            var applicationDbContext = _context.RecurringTransaction
+            var applicationDbContext = _context.RecurringTransactions
                 .Include(r => r.Category)
-                .Include(r => r.User)
                 .Where(t => t.UserId == userId);
             return View(await applicationDbContext.ToListAsync());
         }
@@ -44,8 +43,8 @@ namespace Expense_Tracker_App.Controllers
             {
                 return View(new RecurringTransaction());
             }
-            var recurringTransaction = await _context.RecurringTransaction
-                .FirstOrDefaultAsync(t => t.Id == id && t.UserId == GetUserId());
+            var recurringTransaction = await _context.RecurringTransactions
+                .FirstOrDefaultAsync(t => t.RecurringTransactionId == id && t.UserId == GetUserId());
             if (recurringTransaction == null)
             {
                 NotFound();
@@ -57,21 +56,28 @@ namespace Expense_Tracker_App.Controllers
         // POST: RecurringTransactions/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateOrEdit([Bind("Id,Amount,StartDate,EndDate,Frequency,CategoryId,UserId")] RecurringTransaction recurringTransaction)
+        public async Task<IActionResult> CreateOrEdit([Bind("RecurringTransactionId,Amount,StartDate,EndDate,Frequency,CategoryId,UserId")] RecurringTransaction recurringTransaction)
         {
             if (!ModelState.IsValid)
             {
+                foreach (var error in ModelState)
+                {
+                    foreach (var subError in error.Value.Errors)
+                    {
+                        Console.WriteLine($"Field: {error.Key}, Error: {subError.ErrorMessage}");
+                    }
+                }
                 PopulateCategories();
                 return View(recurringTransaction);
             }
             recurringTransaction.UserId = GetUserId();
-            if (recurringTransaction.Id == 0)
+            if (recurringTransaction.RecurringTransactionId == 0)
             {
                 _context.Add(recurringTransaction);
             } else
             {
-                var existingRecurringTransaction = await _context.RecurringTransaction
-                    .FirstOrDefaultAsync(t => t.Id ==  recurringTransaction.Id && t.UserId == GetUserId());
+                var existingRecurringTransaction = await _context.RecurringTransactions
+                    .FirstOrDefaultAsync(t => t.RecurringTransactionId ==  recurringTransaction.RecurringTransactionId && t.UserId == GetUserId());
                 if (existingRecurringTransaction == null)
                     return NotFound();
 
@@ -89,12 +95,12 @@ namespace Expense_Tracker_App.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var recurringTransaction = await _context.RecurringTransaction
-                .FirstOrDefaultAsync(t => t.Id == id && t.UserId == GetUserId());
+            var recurringTransaction = await _context.RecurringTransactions
+                .FirstOrDefaultAsync(t => t.RecurringTransactionId == id && t.UserId == GetUserId());
             if (recurringTransaction == null)
                 return NotFound();
 
-            _context.RecurringTransaction.Remove(recurringTransaction);
+            _context.RecurringTransactions.Remove(recurringTransaction);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

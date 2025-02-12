@@ -11,10 +11,10 @@
 <div class="row">
     <div class="col-md-7">
         <div class="p-5" style="background-color:#212b36">
-            <form asp-route-returnurl="@ViewData["ReturnUrl"]" asp-page="/Account/Login method="post">
+            <form asp-route-returnurl="@ViewData["ReturnUrl"]"  method="post">
                 <h4>Use a local account to log in.</h4>
 
-
+             
                 <div class="mb-3">
                     @*syncfunction*@
                     <ejs-textbox id="email" ejs-for="Email"
@@ -23,14 +23,19 @@
 
                 </div>
                 <div class="mb-3">
-                    @*Password*@
-                    @*Syncfunction*@
 
                     <ejs-textbox type="password" ejs-for="Password" id="password"
                     placeholder="Password" floatLabelType="Always"></ejs-textbox>
-                    <span asp-validation-for="Password" class="text-danger"></span>
+                    <span asp-validation-for="Password" class="text-danger fs-6"></span>
                 </div>
-                <ejs-button id="submit" content="Submit" type="Submit" cssClass="e-success"></ejs-button>
+                <div asp-validation-summary="All" class="text-danger fs-6 mb-3"></div>
+                <div style="text-align: center; width: 100%">
+                    <ejs-button id="submit" content="Submit" type="Submit" cssClass="e-success"></ejs-button>
+
+                </div>
+
+            
+                
             </form>
         </div>
     </div>

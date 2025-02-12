@@ -23,7 +23,7 @@
 
                     <ejs-textbox type="password" ejs-for="Password" id="password"
                                  placeholder="Password" floatLabelType="Always"></ejs-textbox>
-                    <span asp-validation-for="Password" class="text-danger"></span>
+                    <span asp-validation-for="Password" class="text-danger fs-6"></span>
                 </div>
                 <div class="mb-3">
                     @*Password*@
@@ -33,7 +33,11 @@
                                  placeholder="ConfirmPassword" floatLabelType="Always"></ejs-textbox>
                     <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                 </div>
-                <ejs-button id="submit" content="Submit" type="Submit" cssClass="e-success"></ejs-button>
+                <div asp-validation-summary="All" class="text-danger fs-6 mb-3"></div>
+                <div style="text-align: center; width: 100%">
+                    <ejs-button id="submit" content="Submit" type="Submit" cssClass="e-success"></ejs-button>
+
+                </div>
             </form>
         </div>
     </div>

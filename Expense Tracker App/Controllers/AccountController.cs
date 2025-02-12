@@ -30,7 +30,7 @@ namespace Expense_Tracker_App.Controllers
         {
             if (_signInManager.IsSignedIn(User))
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "DashBoard");
             }
             
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);

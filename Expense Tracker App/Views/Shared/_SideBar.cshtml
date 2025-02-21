@@ -65,25 +65,26 @@
     <e-content-template>
 
         <div class="logo-wrapper">
-            <div class="app-logo">
-                @* <img src="~/images/Logo.png" /> *@
-            </div>
+      
             <div class="w-100"></div>
             <i id="sidebar-toggler" class="fa-solid fa-bars"></i>
         </div>
 
         <div class="profile-wrapper">
-            <img class="profile-pic" src="~/images/mori.jpg" />
+            <img class="profile-pic" src="~/images/mori.jpg" style="width: 40px; height: 40px; border-radius: 50%;" />
             <div class="titles d-flex flex-column ps-3">
-                <h6 class="mb-0">Wallet App</h6>
-                <span class="text-muted">Ashton Cox</span>
+                <h6 class="mb-0">Expense Tracker App</h6>
+                <br />
+                <span class="text-muted">@User.Identity.Name</span>
             </div>
         </div>
 
         <ejs-menu id="menu"
                   items="menuItems"
                   orientation="Vertical"
-                  hamburgerMode></ejs-menu>
+         
+                  hamburgerMode>
+        </ejs-menu>
     </e-content-template>
 </ejs-sidebar>
 

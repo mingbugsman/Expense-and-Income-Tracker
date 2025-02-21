@@ -1,0 +1,22 @@
+﻿@model IEnumerable<Expense_Tracker_App.Models.NotificationLog>
+
+
+@{
+    ViewData["Title"] = "Notification";   
+}
+
+<h2>Notification Logs</h2>
+
+@if (Model != null && Model.Any())
+{
+    <ul>
+        @foreach (var log in Model)
+        {
+            <li>@log.Message - @log.CreatedAt</li>
+        }
+    </ul>
+}
+else
+{
+    <p>No notifications available.</p>
+}

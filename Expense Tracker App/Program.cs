@@ -5,6 +5,8 @@ using Expense_Tracker_App.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Expense_Tracker_App.Service;
+using Expense_Tracker_App.Service.Impl;
 
 
 
@@ -15,6 +17,10 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
+builder.Services.AddScoped<ITransactionService, TransactionService>();
+builder.Services.AddScoped<INotificationLogService, NotificationService>();
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
@@ -42,6 +48,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Home/"; 
+    options.AccessDeniedPath = "/Home/Error"; 
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(60); 
+});
 Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NMaF5cXmBCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdmWX1fcnVRR2hcUUVxV0M=");
 
 

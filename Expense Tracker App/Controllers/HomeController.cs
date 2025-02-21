@@ -18,6 +18,10 @@ namespace Expense_Tracker_App.Controllers
         [AllowAnonymous]
         public IActionResult Index()
         {
+            if (User.Identity.IsAuthenticated) 
+            {
+                return RedirectToAction("Index", "Dashboard"); 
+            }
             return View();
         }
         [Authorize]

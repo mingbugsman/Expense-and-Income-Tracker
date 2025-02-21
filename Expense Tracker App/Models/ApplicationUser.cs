@@ -1,9 +1,23 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace Expense_Tracker_App.Models
 {
     public class ApplicationUser : IdentityUser
+
     {
+        [MaxLength(100)]
+        
+        public override string UserName { get; set; } // Giảm từ 256 -> 100
+
+        [MaxLength(100)]
+        public override string NormalizedUserName { get; set; } // Giảm từ 256 -> 100
+
+        [MaxLength(150)]
+        public override string Email { get; set; } // Giảm từ 256 -> 150
+
+        [MaxLength(15)]
+        public override string PhoneNumber { get; set; }
         public DateTime DateOfBirth { get; set; }
 
 

@@ -19,6 +19,14 @@ namespace Expense_Tracker_App.Data
         public DbSet<NotificationLog> NotificationLogs { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<ApplicationUser>(entity =>
+            {
+                entity.Property(u => u.UserName).HasMaxLength(100);
+                entity.Property(u => u.NormalizedUserName).HasMaxLength(100);
+                entity.Property(u => u.Email).HasMaxLength(150);
+                entity.Property(u => u.PhoneNumber).HasMaxLength(15);
+            });
+
             // cấu trúc 
             modelBuilder.Entity<NotificationLog>()
              .Property(n => n.Log_Type)

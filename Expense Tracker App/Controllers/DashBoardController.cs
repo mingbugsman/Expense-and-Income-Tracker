@@ -5,6 +5,7 @@ using Expense_Tracker_App.Models;
 using System.Globalization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using static Expense_Tracker_App.Controllers.DashBoardController;
 
 namespace Expense_Tracker_App.Controllers
 {
@@ -33,14 +34,18 @@ namespace Expense_Tracker_App.Controllers
         {
             string userId = GetUserId();
             DateTime StartDate = DateTime.Today.AddDays(-6); // 7 ngày trước
-            DateTime EndDate = DateTime.Today; // Ngày hôm nay
+            DateTime EndDate = DateTime.Today.AddDays(1); // Ngày hôm nay
 
             // Lấy giao dịch của User trong 7 ngày qua
             List<Transaction> SelectedTransactions = await _context.Transactions
                 .Include(t => t.Category)
                 .Where(t => t.UserId == userId && t.TransactionDate >= StartDate && t.TransactionDate <= EndDate)
                 .ToListAsync();
-
+            Console.WriteLine(" Income Summary :");
+            foreach (var item in SelectedTransactions)
+            {
+                Console.WriteLine($"Type: {item.Category.Title}, Amount: {item.Amount}");
+            }
             // Tổng thu nhập
             decimal TotalIncome = SelectedTransactions
                 .Where(t => t.Category?.Type == "Income")
@@ -75,20 +80,21 @@ namespace Expense_Tracker_App.Controllers
 
             // 📈 **Spine Chart - Thu nhập & Chi tiêu theo ngày**
             List<SpineChartData> IncomeSummary = SelectedTransactions
-                .Where(t => t.Category?.Type == "Income")
+                .Where(t => t.Category?.Type == "Income" )
                 .GroupBy(t => t.TransactionDate.Date)
                 .Select(g => new SpineChartData { Day = g.Key.ToString("yyyy-MM-dd"), Income = g.Sum(t => t.Amount) })
                 .ToList();
 
             List<SpineChartData> ExpenseSummary = SelectedTransactions
-                .Where(t => t.Category?.Type == "Expense")
+                .Where(t => t.Category?.Type == "Expense" )
                 .GroupBy(t => t.TransactionDate.Date)
                 .Select(g => new SpineChartData { Day = g.Key.ToString("yyyy-MM-dd"), Expense = g.Sum(t => t.Amount) })
                 .ToList();
 
             // Gộp dữ liệu của 7 ngày qua
             string[] last7Days = Enumerable.Range(0, 7)
-                .Select(i => DateTime.Today.AddDays(i).ToString("dd-MMM"))
+                .Select(i => DateTime.Today.AddDays(-i).ToString("yyyy-MM-dd"))
+                .Reverse()
                 .ToArray();
 
             ViewBag.SplineChartData = from day in last7Days
@@ -103,6 +109,11 @@ namespace Expense_Tracker_App.Controllers
                                           Expense = expense?.Expense ?? 0
                                       };
 
+            Console.WriteLine("Spline Chart Data:");
+            foreach (var item in ViewBag.SplineChartData)
+            {
+                Console.WriteLine($"Day: {item.Day}, Income: {item.Income}, Expense: {item.Expense}");
+            }
             // 🆕 **Lấy 5 giao dịch gần nhất**
             ViewBag.RecentTransactions = SelectedTransactions
                 .OrderByDescending(t => t.TransactionDate)

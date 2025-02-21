@@ -3,9 +3,9 @@ using Expense_Tracker_App.Enum;
 using Expense_Tracker_App.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Expense_Tracker_App.Service
+namespace Expense_Tracker_App.Service.Impl
 {
-    public class NotificationService
+    public class NotificationService : INotificationLogService
     {
         private readonly ApplicationDbContext _context;
 
@@ -26,7 +26,7 @@ namespace Expense_Tracker_App.Service
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<NotificationLog>> GetNotificationLogsByUser(string userId)
+        public async Task<List<NotificationLog>> GetNotificationLogsByUserId(string userId)
         {
             return await _context.NotificationLogs
                 .Where(log => log.UserId == userId)

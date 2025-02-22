@@ -3,14 +3,20 @@
 using Expense_Tracker_App.Data;
 using Expense_Tracker_App.Service;
 using Microsoft.EntityFrameworkCore;
+using Expense_Tracker_App.Service.Impl;
+using Expense_Tracker_App.Enum;
 
 public class TransactionService : ITransactionService
 {
     private readonly ApplicationDbContext _context;
+    private INotificationLogService _notificationService;
+    private IBudgetService _budgetService;  
 
-    public TransactionService(ApplicationDbContext context)
+    public TransactionService(ApplicationDbContext context, INotificationLogService notificationService, IBudgetService budgetService)
     {
         _context = context;
+        _notificationService = notificationService;
+        _budgetService = budgetService;
     }
 
     public async Task<List<Transaction>> GetUserTransactionsAsync(string userId)
@@ -28,12 +34,22 @@ public class TransactionService : ITransactionService
             .FirstOrDefaultAsync(t => t.TransactionId == id && t.UserId == userId);
     }
 
-    public async Task CreateOrUpdateTransactionAsync(Transaction transaction, string userId)
+    public async Task<bool> CreateOrUpdateTransactionAsync(Transaction transaction, string userId)
     {
         transaction.UserId = userId;
+        bool isAllowed = await _budgetService.IsTransactionAllowed(transaction.UserId, transaction.CategoryId, transaction.Amount);
+
+
+        if (!isAllowed)
+        {
+            return false; // Ngăn chặn giao dịch
+        }
 
         if (transaction.TransactionId == 0)
         {
+        
+            string message = NotificationMessageFactory.GenerateMessage(NotificationType.Transaction, "thêm", transaction.Category.Title, transaction.Amount, transaction.TransactionDate);
+             await _notificationService.AddLogAsync(userId, NotificationType.Transaction, message);
             _context.Add(transaction);
         }
         else
@@ -42,12 +58,15 @@ public class TransactionService : ITransactionService
                 .FirstOrDefaultAsync(t => t.TransactionId == transaction.TransactionId && t.UserId == userId);
 
             if (existingTransaction == null)
-                return;
-
+                return false;
+            string message = NotificationMessageFactory
+                .GenerateMessage(NotificationType.Transaction, "cập nhập", transaction.Category.Title, transaction.Amount, transaction.TransactionDate);
+            await _notificationService.AddLogAsync (userId, NotificationType.Transaction, message);
             _context.Entry(existingTransaction).CurrentValues.SetValues(transaction);
         }
-
+        await Console.Out.WriteLineAsync("luu giao dich !");
         await _context.SaveChangesAsync();
+        return true;
     }
 
     public async Task<bool> DeleteTransactionAsync(int id, string userId)
@@ -58,7 +77,11 @@ public class TransactionService : ITransactionService
         if (transaction == null)
             return false;
 
+
         _context.Transactions.Remove(transaction);
+        string message = NotificationMessageFactory
+                .GenerateMessage(NotificationType.Transaction, "xóa", transaction.Category.Title, transaction.Amount, transaction.TransactionDate);
+        await _notificationService.AddLogAsync(userId, NotificationType.Transaction, message);
         await _context.SaveChangesAsync();
         return true;
     }

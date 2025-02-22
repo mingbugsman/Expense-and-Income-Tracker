@@ -42,7 +42,15 @@ namespace Expense_Tracker_App.Controllers
             var userId = GetUserId();
             var budgets = _context.Budgets
                 .Include(t => t.Category)
+
                 .Where(t => t.UserId == userId);
+
+            foreach (var item in budgets)
+            {
+                Console.WriteLine(item.UserId);
+                Console.WriteLine(item.BudgetID);
+                Console.WriteLine(item.BudgetAmount);
+            }
 
             return View(await budgets.ToListAsync());
         }
@@ -58,7 +66,6 @@ namespace Expense_Tracker_App.Controllers
 
             var budget = _context.Budgets
                 .FirstOrDefault(t => t.BudgetID == id && t.UserId == GetUserId());
-
             if (budget == null)
                 return NotFound();
 

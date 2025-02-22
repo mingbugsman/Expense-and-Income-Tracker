@@ -1,120 +1,75 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Expense_Tracker_App.Data;
-using Expense_Tracker_App.Models;
+﻿using Expense_Tracker_App.Models;
+using Expense_Tracker_App.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
 
 namespace Expense_Tracker_App.Controllers
 {
     [Authorize]
     public class CategoriesController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ICategoryService _categoryService;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly INotificationLogService _notificationLogService;
 
-        public CategoriesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public CategoriesController(ICategoryService categoryService, UserManager<ApplicationUser> userManager, INotificationLogService notificationLogService)
         {
-            _context = context;
+            _categoryService = categoryService;
             _userManager = userManager;
-
-        }
-        private string getUserId()
-        {
-           return _userManager.GetUserId(User);
+            _notificationLogService = notificationLogService;
         }
 
-        // GET: Categories
+        private string GetUserId() => _userManager.GetUserId(User);
+
         public async Task<IActionResult> Index()
         {
-            var userId = getUserId();
-            var categories = await _context.Categories.Where(c => c.UserId == userId).ToListAsync();    
+            var userId = GetUserId();
+            var categories = await _categoryService.GetCategoriesByUserIdAsync(userId);
             return View(categories);
         }
 
-
-        // 🛠 Đảm bảo hỗ trợ phương thức GET
-        public IActionResult CreateOrEdit(int id = 0)
+        public async Task<IActionResult> CreateOrEdit(int id = 0)
         {
             if (id == 0)
                 return View(new Category());
-            else
-                return View(_context.Categories.Find(id));
-        }
 
-
-
-        // POST: Categories/CreateOrEdit
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateOrEdit([Bind("CategoryId,Title,Icon,Type")] Category category)
-        {
-            category.UserId = getUserId();
-            if (ModelState.IsValid)
-            {
-                category.UserId = getUserId(); // Đảm bảo UserId là của user đang đăng nhập
-                Console.WriteLine($"CategoryId: {category.CategoryId}, UserId: {category.UserId}");
-                if (category.CategoryId == 0)
-                    _context.Add(category);
-                else
-                {
-                    var existingCategory = await _context.Categories
-                        .FirstOrDefaultAsync(c => c.CategoryId == category.CategoryId && c.UserId == category.UserId);
-
-                    if (existingCategory == null)
-                        return NotFound();
-
-                    _context.Entry(existingCategory).CurrentValues.SetValues(category);
-                }
-
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            if (!ModelState.IsValid)
-            {
-                foreach (var error in ModelState)
-                {
-                    foreach (var subError in error.Value.Errors)
-                    {
-                        Console.WriteLine($"Field: {error.Key}, Error: {subError.ErrorMessage}");
-                    }
-                }
-            }
+            var category = await _categoryService.GetCategoryByIdAsync(id, GetUserId());
+            if (category == null)
+                return NotFound();
 
             return View(category);
         }
 
-
-
-
-        // POST: Categories/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> CreateOrEdit([Bind("CategoryId,Title,Icon,Type")] Category category)
         {
-            var userId = getUserId();
-            var category = await _context.Categories
-                .FirstOrDefaultAsync(c => c.CategoryId == id && c.UserId == userId);
+            category.UserId = GetUserId();
 
-            if (category == null)
-                return NotFound();
+            if (!ModelState.IsValid)
+                return View(category);
 
-            _context.Categories.Remove(category);
-            await _context.SaveChangesAsync();
+            if (category.CategoryId == 0)
+
+                await _categoryService.AddCategoryAsync(category);
+            else
+                await _categoryService.UpdateCategoryAsync(category);
 
             return RedirectToAction(nameof(Index));
         }
 
-
-
-        private bool CategoryExists(int id)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            return _context.Categories.Any(e => e.CategoryId == id);
+            var success = await _categoryService.DeleteCategoryAsync(id, GetUserId());
+            if (!success)
+                return NotFound();
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

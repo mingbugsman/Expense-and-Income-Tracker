@@ -55,7 +55,11 @@ namespace Expense_Tracker_App.Controllers
                 return View(transaction);
             }
 
-            await _transactionService.CreateOrUpdateTransactionAsync(transaction, GetUserId());
+            var flag = await _transactionService.CreateOrUpdateTransactionAsync(transaction, GetUserId());
+            if (!flag)
+            {
+                return View(transaction);
+            }
             return RedirectToAction(nameof(Index));
         }
 

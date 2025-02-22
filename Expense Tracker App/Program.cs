@@ -21,7 +21,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<INotificationLogService, NotificationService>();
-
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IBudgetService, BudgetService>();    
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     options.Password.RequireDigit = true;

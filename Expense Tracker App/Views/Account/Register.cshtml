@@ -1,5 +1,6 @@
-﻿@model Expense_Tracker_App.Models.AccountViewModels.RegisterViewModel
-}
+﻿
+
+@model Expense_Tracker_App.Models.AccountViewModels.RegisterViewModel
 @{
     ViewData["Title"] = "Register";
 }
@@ -7,7 +8,7 @@
     <div class="col-md-7">
         <div class="p-5" style="background-color:#212b36">
             <form asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
-                <h4>Use a local account to log in.</h4>
+                <h4>Register an account</h4>
 
 
                 <div class="mb-3">
@@ -33,11 +34,9 @@
                                  placeholder="ConfirmPassword" floatLabelType="Always"></ejs-textbox>
                     <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                 </div>
+                <a href="/Account/Login">Already have an account?</a>
                 <div asp-validation-summary="All" class="text-danger fs-6 mb-3"></div>
-                <div style="text-align: center; width: 100%">
                     <ejs-button id="submit" content="Submit" type="Submit" cssClass="e-success"></ejs-button>
-
-                </div>
             </form>
         </div>
     </div>

@@ -7,17 +7,17 @@ namespace Expense_Tracker_App.Models
 
     {
         [MaxLength(100)]
-        [Required(ErrorMessage ="Tên người dùng không được để trống")]
+        public override string? UserName { get; set; }
+
+        [MaxLength(100)]
+        public string? FullName { get; set; }
         
-        public override string UserName { get; set; } 
 
         [MaxLength(100)]
         public override string NormalizedUserName { get; set; }
 
-        [Required(ErrorMessage = "Email không được để trống")]
+
         [MaxLength(150)]
-        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
-            ErrorMessage = "Email không hợp lệ!")]
         public override string Email { get; set; }
 
 
@@ -30,7 +30,7 @@ namespace Expense_Tracker_App.Models
         [DataType(DataType.Date)]
         public DateTime? DateOfBirth { get; set; }
 
-          public byte[]? ProfileImg { get; set; } // Lưu ảnh dưới dạng BLOB
+        public byte[]? ProfileImg { get; set; } // Lưu ảnh dưới dạng BLOB
 
 
         // Quan hệ 1-n với Category

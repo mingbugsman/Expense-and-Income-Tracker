@@ -1,47 +1,64 @@
-﻿@model Expense_Tracker_App.Models.UpdateProfile
+﻿
+    @model Expense_Tracker_App.Models.UpdateProfile
 
-@{
-    ViewData["Title"] = "Hoàn tất hồ sơ";
-}
-
-<h2>Hoàn tất hồ sơ</h2>
-
-<form asp-action="CompleteProfile" method="post" enctype="multipart/form-data">
-    <div class="form-group">
-        <label asp-for="UserName"></label>
-        <input name="UserName" id="Username" asp-for="UserName" class="form-control" required />
-        <span asp-validation-for="UserName" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Email"></label>
-        <input asp-for="Email" class="form-control" required />
-        <span asp-validation-for="Email" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="PhoneNumber"></label>
-        <input asp-for="PhoneNumber" class="form-control" />
-        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="DateOfBirth"></label>
-        <input asp-for="DateOfBirth" type="date" class="form-control" required />
-        <span asp-validation-for="DateOfBirth" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="ProfileImg">Ảnh đại diện</label>
-        <input asp-for="ProfileImg" type="file" class="form-control" accept="image/*" />
-        <span asp-validation-for="ProfileImg" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Cập nhật</button>
-</form>
-
-
-@section Scripts {
     @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        ViewData["Title"] = "Complete your profile";
     }
-}
+
+    <h2>Complete your profile</h2>
+
+    <div class="row">
+        <div class="col-md-7">
+            <div class="widget p-5" style="background-color:#212b36">
+                <form asp-action="CompleteProfile" method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+
+                        <ejs-textbox id="FullName" ejs-for="FullName" placeholder="FullName"
+                                     floatLabelType="Always"></ejs-textbox>
+                        <span asp-validation-for="FullName" class="text-danger fs-6"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <ejs-textbox id="Email"
+                                     ejs-for="Email"
+                                     placeholder="Email"
+                                     floatLabelType="Always"></ejs-textbox>
+                        <span asp-validation-for="Email" class="text-danger fs-6"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <ejs-textbox id="PhoneNumber" ejs-for="PhoneNumber" placeholder="PhoneNumber"
+                                     floatLabelType="Always"></ejs-textbox>
+                        <span asp-validation-for="PhoneNumber" class="text-danger fs-6"></span>
+                    </div>
+
+                    <div class="mb-3">
+
+                        <ejs-datepicker id="DateOfBirth" ejs-for="DateOfBirth" placeholder="Date Of Birth"
+                                        floatLabelType="Always" format="yyyy-MM-dd" value="@Model.DateOfBirth"> </ejs-datepicker>
+                        <span asp-validation-for="DateOfBirth" class="text-danger fs-6"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <ejs-uploader id="uploadFiles" name="ProfileImg" autoUpload="false"
+                                      allowedExtensions=".jpg"></ejs-uploader>
+                        <span asp-validation-for="ProfileImg" class="text-danger fs-6"></span>
+                    </div>
+                    <ejs-button id="submit" content="Submit" type="submit" cssClass="e-success"></ejs-button>
+                </form>
+            </div>
+        </div>
+        <div class="col-md-5">
+                <div class="widget h-100 d-flex justify-content-center align-items-center"
+                     style="background-color:#212b36">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+        
+    </div>
+
+
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+    }

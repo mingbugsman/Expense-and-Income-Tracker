@@ -112,7 +112,9 @@
             </div>
             <div class="px-4 pb-4">
                 <ejs-grid id="recent-transactions"
-                          dataSource="@ViewBag.RecentTransactions" gridLines="None">
+                          dataSource="@ViewBag.RecentTransactions" gridLines="None"
+                allowSorting="true" allowPaging="true">
+                    <e-grid-pagesettings pageSize="5"></e-grid-pagesettings>
                     <e-grid-columns>
                         <e-grid-column headerText="Category" field="Category.Title"></e-grid-column>
                         <e-grid-column headerText="Date" field="TransactionDate" type="date" format="MMM-dd-yy"></e-grid-column>

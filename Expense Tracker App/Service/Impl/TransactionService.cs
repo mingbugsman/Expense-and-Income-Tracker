@@ -41,7 +41,7 @@ public class TransactionService : ITransactionService
 
         if (!isAllowed)
         {
-            return false; // Ngăn chặn giao dịch
+            return false;
         }
 
         if (transaction.TransactionId == 0)

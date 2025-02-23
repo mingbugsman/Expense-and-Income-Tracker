@@ -6,11 +6,11 @@ namespace Expense_Tracker_App.Models
     {
   
             [Required, MaxLength(100)]
-            public string UserName { get; set; }
+            public string FullName { get; set; }
 
             [Required, MaxLength(150)]
-        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "Email không hợp lệ!")]
-        public string Email { get; set; }
+            [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "Email không hợp lệ!")]
+            public string Email { get; set; }
 
             [MaxLength(15)]
             public string? PhoneNumber { get; set; }
@@ -18,6 +18,7 @@ namespace Expense_Tracker_App.Models
             [Required, DataType(DataType.Date)]
             public DateTime DateOfBirth { get; set; }
 
+        public string? ProfileImgBase64 { get; set; }
         public IFormFile? ProfileImg { get; set; } // Nhận file ảnh từ form
 
     }

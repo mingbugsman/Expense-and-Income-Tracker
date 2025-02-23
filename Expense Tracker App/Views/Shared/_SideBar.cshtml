@@ -1,4 +1,8 @@
-﻿
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@{
+    var currentUser = await UserManager.GetUserAsync(User);
+}
 @{
     List<Object> menuItems = new List<Object>();
 
@@ -25,21 +29,18 @@
         iconCss = "fa-solid fa-arrow-right-arrow-left",
         url = "/RecurringTransactions"
     });
-
     menuItems.Add(new
     {
         text = "Transactions",
         iconCss = "fa-solid fa-arrow-right-arrow-left",
         url = "/Transactions"
     });
-
     menuItems.Add(new
     {
         text = "Budgets",
         iconCss = "fa-solid fa-arrow-right-arrow-left",
         url = "/Budgets"
     });
-
 
     menuItems.Add(new
     {
@@ -51,7 +52,8 @@
         text = "Reports",
         iconCss = "fa-solid fa-chart-simple",
         url = "#"
-    }); menuItems.Add(new
+    });
+    menuItems.Add(new
     {
         text = "Settings",
         iconCss = "fa-solid fa-gear",
@@ -59,37 +61,40 @@
     });
 }
 
-
 <ejs-sidebar id="sidebar" width="290px" enableDock dockSize="100px"
              target=".dock-target" enableGestures="false">
     <e-content-template>
-
         <div class="logo-wrapper">
-      
             <div class="w-100"></div>
             <i id="sidebar-toggler" class="fa-solid fa-bars"></i>
         </div>
 
         <div class="profile-wrapper">
-            <img class="profile-pic" src="~/images/mori.jpg" style="width: 40px; height: 40px; border-radius: 50%;" />
+            <a href="/Account/Profile">
+                <img class="profile-pic" src="@(currentUser != null && currentUser.ProfileImg != null && currentUser.ProfileImg.Length > 0
+    ? $"data:image/jpeg;base64,{Convert.ToBase64String(currentUser.ProfileImg)}"
+    : Url.Content("~/images/default.jpg"))"
+                     alt="Profile Image"
+                     style="width: 43px; height: 40px; border-radius: 50%;" />
+            </a>
+
             <div class="titles d-flex flex-column ps-3">
                 <h6 class="mb-0">Expense Tracker App</h6>
                 <br />
-                <span class="text-muted">@User.Identity.Name</span>
+                <span class="text-muted">@currentUser?.FullName</span>
             </div>
         </div>
 
         <ejs-menu id="menu"
                   items="menuItems"
                   orientation="Vertical"
-         
                   hamburgerMode>
         </ejs-menu>
     </e-content-template>
 </ejs-sidebar>
 
 <script>
-        document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function () {
         const dockBar = document.getElementById('sidebar').ej2_instances[0];
         const toggler = document.getElementById('sidebar-toggler');
         if (toggler) {
@@ -99,6 +104,4 @@
             };
         }
     });
-
-
 </script>

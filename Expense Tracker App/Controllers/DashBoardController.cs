@@ -32,6 +32,7 @@ namespace Expense_Tracker_App.Controllers
 
         public async Task<IActionResult> Index()
         {
+            
             string userId = GetUserId();
             DateTime StartDate = DateTime.Today.AddDays(-6); // 7 ngày trước
             DateTime EndDate = DateTime.Today.AddDays(1); // Ngày hôm nay

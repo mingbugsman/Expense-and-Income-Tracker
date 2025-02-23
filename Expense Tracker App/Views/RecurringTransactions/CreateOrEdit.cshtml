@@ -1,69 +1,69 @@
-﻿@model Expense_Tracker_App.Models.RecurringTransaction
+﻿
+    @model Expense_Tracker_App.Models.RecurringTransaction
+    @{
+        ViewData["PageTitle"] = Model.RecurringTransactionId == 0 ? "Create a new Recurring Transaction" : "Edit Recurring Transaction";
+        ViewData["PageActionText"] = "Back to List";
+        ViewData["PageActionUrl"] = "/RecurringTransactions";
+    }
 
-@{
-    ViewData["PageTitle"] = Model.RecurringTransactionId == 0 ? "Create a new Recurring Transaction" : "Edit Recurring Transaction";
-    ViewData["PageActionText"] = "Back to List";
-    ViewData["PageActionUrl"] = "/RecurringTransactions";
-}
-
-
-<div class="row">
-    <div class="col-md-7">
-        <div class="widget p-5" style="background-color:#212b36">
-            <form asp-action="CreateOrEdit">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input type="hidden" name="RecurringTransactionId" asp-for="@Model.RecurringTransactionId" />
-                <div class="mb-3">
+    <div class="row">
+        <div class="col-md-7">
+            <div class="widget p-5" style="background-color:#212b36">
+                <form asp-action="CreateOrEdit">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" name="RecurringTransactionId" asp-for="@Model.RecurringTransactionId" />
+                    <div class="mb-3">
                   
 
-                    <ejs-numerictextbox id="amount" ejs-for="Amount"
-                                        placeholder="Amount" floatLabelType="Always"
-                                        min=0 format="n2" decimals="2"></ejs-numerictextbox>
-                    <span asp-validation-for="Amount" class="text-danger fs-6"></span>
-                </div>
-                <div class="mb-3">
+                        <ejs-numerictextbox id="amount" ejs-for="Amount"
+                                            placeholder="Amount" floatLabelType="Always"
+                                            min=0 format="n2" decimals="2"></ejs-numerictextbox>
+                        <span asp-validation-for="Amount" class="text-danger fs-6"></span>
+                    </div>
+                    <div class="mb-3">
 
-                    <ejs-datepicker id="startdate" ejs-for="StartDate"
-                                    placeholder="Date" floatLabelType="Always"
-                                    format="yyyy-MM-dd" value="@Model.StartDate"></ejs-datepicker>
-                    <span asp-validation-for="StartDate" class="text-danger"></span>
+                        <ejs-datepicker id="startdate" ejs-for="StartDate"
+                                        placeholder="Date" floatLabelType="Always"
+                                        format="yyyy-MM-dd" value="@Model.StartDate"></ejs-datepicker>
+                        <span asp-validation-for="StartDate" class="text-danger"></span>
                    
-                </div>
-                <div class="mb-3">
-                    <ejs-datepicker id="enddate" ejs-for="EndDate"
-                                    placeholder="Date" floatLabelType="Always"
-                                    format="yyyy-MM-dd" value="@Model.EndDate"></ejs-datepicker>
-                    <span asp-validation-for="EndDate" class="text-danger"></span>
-                </div>
-                <div class="mb-3">
-                    <ejs-textbox id="Frequency" placeholder="Frequency" ejs-for="Frequency"
-                                 floatLabelType="Always" multiline="true" rows="3"></ejs-textbox>
-                </div>
-                <div class="mb-3">
-                    <ejs-dropdownlist id="ddlCategory" ejs-for="CategoryId"
-                                      dataSource="@ViewBag.Categories" placeholder="Category"
-                                      floatLabelType="Always" allowFiltering="true" ignoreAccent="true"
-                                      filterType="Contains" popupHeight="220px">
-                        <e-dropdownlist-fields value="CategoryId" text="Title"></e-dropdownlist-fields>
-                    </ejs-dropdownlist>
-                    <span asp-validation-for="CategoryId" class="text-danger fs-6"></span>
-                </div>
-                <div class="mb-3">
-                    <ejs-button id="submit" content="Submit" type="Submit" cssClass="e-success"></ejs-button>
-                </div>
-            </form>
+                    </div>
+                    <div class="mb-3">
+                        <ejs-datepicker id="enddate" ejs-for="EndDate"
+                                        placeholder="Date" floatLabelType="Always"
+                                        format="yyyy-MM-dd" value="@Model.EndDate"></ejs-datepicker>
+                        <span asp-validation-for="EndDate" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <ejs-textbox id="Frequency" placeholder="Frequency" ejs-for="Frequency"
+                                     floatLabelType="Always"></ejs-textbox>
+                    </div>
+                    <div class="mb-3">
+                        <ejs-textbox id="Note" ejs-for="Note" floatLabelType="Always" placeholder="Note..." multiline="true" rows="3"></ejs-textbox>
+                    </div>
+                    <div class="mb-3">
+                        <ejs-dropdownlist id="ddlCategory" ejs-for="CategoryId"
+                                          dataSource="@ViewBag.Categories" placeholder="Category"
+                                          floatLabelType="Always" allowFiltering="true" ignoreAccent="true"
+                                          filterType="Contains" popupHeight="220px">
+                            <e-dropdownlist-fields value="CategoryId" text="Title"></e-dropdownlist-fields>
+                        </ejs-dropdownlist>
+                        <span asp-validation-for="CategoryId" class="text-danger fs-6"></span>
+                    </div>
+                    <div class="mb-3">
+                        <ejs-button id="submit" content="Submit" type="Submit" cssClass="e-success"></ejs-button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="widget h-100 d-flex justify-content-center align-items-center"
+                 style="background-color:#212b36">
+                <i class="fa-solid fa-money-bill-transfer fa-2xl"></i>
+            </div>
         </div>
     </div>
-    <div class="col-md-5">
-        <div class="widget h-100 d-flex justify-content-center align-items-center"
-             style="background-color:#212b36">
-            <i class="fa-solid fa-money-bill-transfer fa-2xl"></i>
-        </div>
-    </div>
-</div>
 
-
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    }

@@ -56,7 +56,7 @@ namespace Expense_Tracker_App.Controllers
         // POST: RecurringTransactions/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateOrEdit([Bind("RecurringTransactionId,Amount,StartDate,EndDate,Frequency,CategoryId,UserId")] RecurringTransaction recurringTransaction)
+        public async Task<IActionResult> CreateOrEdit([Bind("RecurringTransactionId,Amount,StartDate,EndDate,Frequency,Note,CategoryId,UserId")] RecurringTransaction recurringTransaction)
         {
             if (!ModelState.IsValid)
             {

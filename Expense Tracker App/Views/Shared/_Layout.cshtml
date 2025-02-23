@@ -1,4 +1,10 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@{
+    var currentUser = await UserManager.GetUserAsync(User);
+    
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -16,9 +22,8 @@
 
 <body class="e-bigger">
     @if (User.Identity.IsAuthenticated){
-    @using Microsoft.AspNetCore.Identity
-    @using Expense_Tracker_App.Models
-    @inject UserManager<ApplicationUser> UserManager
+
+       
         <partial name="_SideBar" />
         <div class="dock-target">
 
@@ -36,7 +41,13 @@
                         </form>
                         <i class="fa-solid fa-bell"></i>
                         <a href="/Notification/Index"><i class="fa-solid fa-message"></i></a>
-                        <img class="profile-pic" src="/images/mori.jpg" style="width: 40px; height: 40px; border-radius: 50%;" />
+                        <a href="/Account/Profile">
+                            <img class="profile-pic" src="@(currentUser != null && currentUser.ProfileImg != null && currentUser.ProfileImg.Length > 0
+                            ? $"data:image/jpeg;base64,{Convert.ToBase64String(currentUser.ProfileImg)}"
+                            : Url.Content("~/images/default.jpg"))"
+                                 alt="Profile Image"
+                                 style="width: 43px; height: 40px; border-radius: 50%;" />
+                        </a>
                     </div>
                 </div>
             </nav>

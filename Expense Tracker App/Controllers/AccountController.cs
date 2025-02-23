@@ -30,6 +30,13 @@ namespace Expense_Tracker_App.Controllers
             _context = context;
         }
 
+        [HttpGet]
+        [Authorize]
+        public IActionResult Profile()
+        {
+            return View();
+        }
+        
 
         // GET: Account/CompleteProfile
         [HttpGet]
@@ -44,10 +51,11 @@ namespace Expense_Tracker_App.Controllers
 
             var model = new UpdateProfile
             {
-                UserName = user.UserName ?? "",
+                FullName = user.FullName ?? "",
                 Email = user.Email ?? "",
                 PhoneNumber = user.PhoneNumber ?? "",
-                DateOfBirth = user.DateOfBirth.GetValueOrDefault(DateTime.Today)
+                DateOfBirth = user.DateOfBirth.GetValueOrDefault(DateTime.Today),
+                ProfileImgBase64 = user.ProfileImg != null ? Convert.ToBase64String(user.ProfileImg) : null
             };
     
 
@@ -57,7 +65,7 @@ namespace Expense_Tracker_App.Controllers
         // POST: Account/CompleteProfile
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CompleteProfile([Bind("UserName,Email,PhoneNumber,DateOfBirth,ProfileImg")] UpdateProfile model)
+        public async Task<IActionResult> CompleteProfile([Bind("FullName,Email,PhoneNumber,DateOfBirth,ProfileImg")] UpdateProfile model)
         {
             if (!ModelState.IsValid)
             {
@@ -73,16 +81,12 @@ namespace Expense_Tracker_App.Controllers
             {
                 return NotFound();
             }
-            if (!Regex.IsMatch(model.Email, @"^.*[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"))
-            {
-                ModelState.AddModelError("Email", "Email không hợp lệ!");
-            }
 
-
-            user.UserName = model.UserName;
-            user.NormalizedUserName = model.UserName.ToUpper();
+            user.FullName = model.FullName;
             user.Email = model.Email;
             user.NormalizedEmail = model.Email.ToUpper();
+            user.UserName = model.Email;
+            user.NormalizedUserName = model.Email.ToUpper();
             user.PhoneNumber = model.PhoneNumber;
             user.DateOfBirth = model.DateOfBirth;
 

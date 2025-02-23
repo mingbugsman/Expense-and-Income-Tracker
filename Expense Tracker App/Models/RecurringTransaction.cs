@@ -21,6 +21,9 @@ namespace Expense_Tracker_App.Models
         public string Frequency { get; set; } = "Monthly"; // e.g., "Monthly", "Weekly"
 
         [Required]
+        public string Note { get; set; }
+
+        [Required]
         public int CategoryId { get; set; }
 
         [ForeignKey("CategoryId")]

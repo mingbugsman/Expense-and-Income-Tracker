@@ -1,9 +1,12 @@
-﻿using Expense_Tracker_App.Models;
+﻿using Expense_Tracker_App.Data;
+using Expense_Tracker_App.Models;
 using Expense_Tracker_App.Models.AccountViewModels;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Text.RegularExpressions;
 
 namespace Expense_Tracker_App.Controllers
 {
@@ -13,16 +16,109 @@ namespace Expense_Tracker_App.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IConfiguration _configuration;
+        private readonly ApplicationDbContext _context;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            ApplicationDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
+            _context = context;
         }
+
+
+        // GET: Account/CompleteProfile
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> CompleteProfile()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var model = new UpdateProfile
+            {
+                UserName = user.UserName ?? "",
+                Email = user.Email ?? "",
+                PhoneNumber = user.PhoneNumber ?? "",
+                DateOfBirth = user.DateOfBirth.GetValueOrDefault(DateTime.Today)
+            };
+    
+
+            return View(model);
+        }
+
+        // POST: Account/CompleteProfile
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CompleteProfile([Bind("UserName,Email,PhoneNumber,DateOfBirth,ProfileImg")] UpdateProfile model)
+        {
+            if (!ModelState.IsValid)
+            {
+                foreach (var err in ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    Console.WriteLine(err.ErrorMessage);
+                }
+                return View(model);
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            if (!Regex.IsMatch(model.Email, @"^.*[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"))
+            {
+                ModelState.AddModelError("Email", "Email không hợp lệ!");
+            }
+
+
+            user.UserName = model.UserName;
+            user.NormalizedUserName = model.UserName.ToUpper();
+            user.Email = model.Email;
+            user.NormalizedEmail = model.Email.ToUpper();
+            user.PhoneNumber = model.PhoneNumber;
+            user.DateOfBirth = model.DateOfBirth;
+
+            if (model.ProfileImg != null && model.ProfileImg.Length > 0)
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    await model.ProfileImg.CopyToAsync(memoryStream);
+                    user.ProfileImg = memoryStream.ToArray();
+                }
+            }
+
+            await Console.Out.WriteLineAsync(user.UserName);
+            await Console.Out.WriteLineAsync(user.Email);
+            await Console.Out.WriteLineAsync(user.PhoneNumber);
+            await Console.Out.WriteLineAsync(user.DateOfBirth.ToString());
+            var result = await _userManager.UpdateAsync(user);
+            await _context.SaveChangesAsync();
+            if (result.Succeeded)
+            {
+                await _signInManager.RefreshSignInAsync(user);
+                return RedirectToAction("Index", "DashBoard");
+            }
+
+            else
+            {
+                Console.WriteLine("User update failed!");
+                foreach (var error in result.Errors)
+                {
+                    Console.WriteLine($"Error: {error.Description}");
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+            }
+            return View(model);
+        }
+
 
         [HttpGet]
         [AllowAnonymous]
@@ -104,7 +200,7 @@ namespace Expense_Tracker_App.Controllers
                 if (result.Succeeded)
                 {
                     await _signInManager.SignInAsync(user, isPersistent: false);
-                    return RedirectToLocal(returnUrl);
+                    return RedirectToAction("SetUpProfile", "Account");
                 }
                 AddErrors(result);
             }

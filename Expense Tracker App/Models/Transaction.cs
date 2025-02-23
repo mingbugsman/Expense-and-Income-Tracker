@@ -15,6 +15,9 @@ namespace Expense_Tracker_App.Models
         public string? Note { get; set; }
         public DateTime TransactionDate { get; set; } =  DateTime.Now;
 
+        public byte[]? BillImage { get; set; } // BLOB 
+
+
         // CATEGORY ID
         public int CategoryId { get; set; }
         public Category? Category { get; set; }

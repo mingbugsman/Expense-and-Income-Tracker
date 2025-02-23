@@ -1,0 +1,47 @@
+﻿@model Expense_Tracker_App.Models.UpdateProfile
+
+@{
+    ViewData["Title"] = "Hoàn tất hồ sơ";
+}
+
+<h2>Hoàn tất hồ sơ</h2>
+
+<form asp-action="CompleteProfile" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label asp-for="UserName"></label>
+        <input name="UserName" id="Username" asp-for="UserName" class="form-control" required />
+        <span asp-validation-for="UserName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control" required />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="PhoneNumber"></label>
+        <input asp-for="PhoneNumber" class="form-control" />
+        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="DateOfBirth"></label>
+        <input asp-for="DateOfBirth" type="date" class="form-control" required />
+        <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="ProfileImg">Ảnh đại diện</label>
+        <input asp-for="ProfileImg" type="file" class="form-control" accept="image/*" />
+        <span asp-validation-for="ProfileImg" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Cập nhật</button>
+</form>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

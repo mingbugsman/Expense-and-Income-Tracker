@@ -39,7 +39,6 @@ public class TransactionService : ITransactionService
         transaction.UserId = userId;
         bool isAllowed = await _budgetService.IsTransactionAllowed(transaction.UserId, transaction.CategoryId, transaction.Amount);
 
-
         if (!isAllowed)
         {
             return false; // Ngăn chặn giao dịch
@@ -47,7 +46,6 @@ public class TransactionService : ITransactionService
 
         if (transaction.TransactionId == 0)
         {
-        
             string message = NotificationMessageFactory.GenerateMessage(NotificationType.Transaction, "thêm", transaction.Category.Title, transaction.Amount, transaction.TransactionDate);
              await _notificationService.AddLogAsync(userId, NotificationType.Transaction, message);
             _context.Add(transaction);
@@ -60,7 +58,7 @@ public class TransactionService : ITransactionService
             if (existingTransaction == null)
                 return false;
             string message = NotificationMessageFactory
-                .GenerateMessage(NotificationType.Transaction, "cập nhập", transaction.Category.Title, transaction.Amount, transaction.TransactionDate);
+                .GenerateMessage(NotificationType.Transaction, "cập nhập", GetTitle(transaction.CategoryId), transaction.Amount, transaction.TransactionDate);
             await _notificationService.AddLogAsync (userId, NotificationType.Transaction, message);
             _context.Entry(existingTransaction).CurrentValues.SetValues(transaction);
         }
@@ -73,14 +71,14 @@ public class TransactionService : ITransactionService
     {
         var transaction = await _context.Transactions
             .FirstOrDefaultAsync(t => t.TransactionId == id && t.UserId == userId);
-
+ 
         if (transaction == null)
             return false;
 
 
         _context.Transactions.Remove(transaction);
         string message = NotificationMessageFactory
-                .GenerateMessage(NotificationType.Transaction, "xóa", transaction.Category.Title, transaction.Amount, transaction.TransactionDate);
+                .GenerateMessage(NotificationType.Transaction, "xóa", GetTitle(transaction.CategoryId), transaction.Amount, transaction.TransactionDate);
         await _notificationService.AddLogAsync(userId, NotificationType.Transaction, message);
         await _context.SaveChangesAsync();
         return true;
@@ -94,5 +92,10 @@ public class TransactionService : ITransactionService
 
         categories.Insert(0, new Category { CategoryId = 0, Title = "Choose a category" });
         return categories;
+    }
+    private async Task<string> GetTitle(int categoryId)
+    {
+        Category category = await _context.Categories.Where(c => c.CategoryId == categoryId).FirstOrDefaultAsync();
+        return category.Title;
     }
 }

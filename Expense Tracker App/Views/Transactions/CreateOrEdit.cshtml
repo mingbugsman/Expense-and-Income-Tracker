@@ -9,8 +9,8 @@
 <div class="row">
     <div class="col-md-7">
         <div class="widget p-5" style="background-color:#212b36">
-            <form asp-action="CreateOrEdit">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <form asp-action="CreateOrEdit" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger" ></div>
 
                 <input type="hidden" name="TransactionId" asp-for="@Model.TransactionId" />
 
@@ -43,7 +43,9 @@
                     </ejs-dropdownlist>
                     <span asp-validation-for="CategoryId" class="text-danger fs-6"></span>
                 </div>
-
+                <div class="mb-3">
+                  <ejs-uploader id="uploadFiles" name="billImage" autoUpload="false"></ejs-uploader>
+                </div>
                 <ejs-button id="submit" content="Submit" type="Submit" cssClass="e-success"></ejs-button>
             </form>
         </div>

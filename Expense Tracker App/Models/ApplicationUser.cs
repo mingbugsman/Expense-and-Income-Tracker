@@ -7,18 +7,30 @@ namespace Expense_Tracker_App.Models
 
     {
         [MaxLength(100)]
+        [Required(ErrorMessage ="Tên người dùng không được để trống")]
         
-        public override string UserName { get; set; } // Giảm từ 256 -> 100
+        public override string UserName { get; set; } 
 
         [MaxLength(100)]
-        public override string NormalizedUserName { get; set; } // Giảm từ 256 -> 100
+        public override string NormalizedUserName { get; set; }
 
+        [Required(ErrorMessage = "Email không được để trống")]
         [MaxLength(150)]
-        public override string Email { get; set; } // Giảm từ 256 -> 150
+        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
+            ErrorMessage = "Email không hợp lệ!")]
+        public override string Email { get; set; }
+
 
         [MaxLength(15)]
+        [Required(ErrorMessage ="Số điện thoại không được để trống")]
+        [Phone(ErrorMessage ="Sai cấu trúc của số điện thoại")]
         public override string PhoneNumber { get; set; }
-        public DateTime DateOfBirth { get; set; }
+
+        [Required(ErrorMessage = "Ngày sinh không được để trống.")]
+        [DataType(DataType.Date)]
+        public DateTime? DateOfBirth { get; set; }
+
+          public byte[]? ProfileImg { get; set; } // Lưu ảnh dưới dạng BLOB
 
 
         // Quan hệ 1-n với Category

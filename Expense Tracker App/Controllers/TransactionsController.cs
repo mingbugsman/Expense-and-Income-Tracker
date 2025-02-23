@@ -47,19 +47,40 @@ namespace Expense_Tracker_App.Controllers
         // POST: Transactions/CreateOrEdit
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateOrEdit([Bind("TransactionId,CategoryId,Amount,Note,TransactionDate")] Transaction transaction)
+        public async Task<IActionResult> CreateOrEdit([Bind("TransactionId,CategoryId,Amount,Note,TransactionDate")] Transaction transaction, IFormFile? billImage)
         {
+            var userId = GetUserId();
+
             if (!ModelState.IsValid)
             {
-                ViewBag.Categories = _transactionService.GetUserCategories(GetUserId());
+                return View(transaction);
+            }
+            // Xử lý file ảnh hóa đơn (nếu có)
+            if (billImage != null && billImage.Length > 0)
+            {
+                if (!billImage.ContentType.StartsWith("image/"))
+                {
+                    ModelState.AddModelError("BillImage", "Chỉ hỗ trợ file ảnh!");
+                    ViewBag.Categories = _transactionService.GetUserCategories(userId);
+                    return View(transaction);
+                }
+
+                using (var memoryStream = new MemoryStream())
+                {
+                    await billImage.CopyToAsync(memoryStream);
+                    transaction.BillImage = memoryStream.ToArray();
+                }
+            }
+
+            bool success = await _transactionService.CreateOrUpdateTransactionAsync(transaction, userId);
+
+            if (!success)
+            {
+                ModelState.AddModelError(string.Empty, "Không thể thêm/cập nhật giao dịch. Vui lòng kiểm tra lại.");
+                ViewBag.Categories = _transactionService.GetUserCategories(userId);
                 return View(transaction);
             }
 
-            var flag = await _transactionService.CreateOrUpdateTransactionAsync(transaction, GetUserId());
-            if (!flag)
-            {
-                return View(transaction);
-            }
             return RedirectToAction(nameof(Index));
         }
 

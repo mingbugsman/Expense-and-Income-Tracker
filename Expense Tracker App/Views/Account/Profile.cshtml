@@ -1,3 +1,118 @@
-﻿<div>
-    <h4>this is your fcking account</h4>
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@{
+    var currentUser = await UserManager.GetUserAsync(User);
+
+}
+
+<div class="profile-user"  style="background-color:aliceblue; color:black;border-radius:1rem;display:block;">
+    
+    <div style="background-color:#808080; height:5rem;border-top-left-radius:1rem;border-top-right-radius:1rem">
+    </div>
+    <div class="p-3 card_information" >
+        <div class="mb-3" style="position: relative; width: 0; height: 50px">
+
+            <!-- Ảnh đại diện -->
+            <img id="profileImage"
+                 src="@(currentUser != null && currentUser.ProfileImg != null && currentUser.ProfileImg.Length > 0
+             ? $"data:image/jpeg;base64,{Convert.ToBase64String(currentUser.ProfileImg)}"
+             : Url.Content("~/images/default.jpg"))"
+                 alt="Profile Image"
+                 style="width: 105px; height: 100px; border-radius: 50%;
+            object-position:center; position:absolute;
+            top:-30px; border:black 1px solid; cursor: pointer;"
+                 data-bs-toggle="modal" data-bs-target="#imageModal" />
+
+            <!-- Modal Bootstrap -->
+            <div class="modal fade" id="imageModal" tabindex="-1" aria-spanledby="imageModalspan" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-body text-center">
+                            <img id="modalImage" src="" class="img-fluid" style="border-radius: 10px;" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div> 
+        <div style="margin-top:50px;font-family:Pixelify_Sans;" class="information">
+            <div class="mb-3 px-3">
+                <h2>Information User</h2>
+            </div>
+            <div class="px-5">
+                <div class="mb-3 px-2">
+                    <span>Id User : </span>
+                    <p>@currentUser?.Id</p>
+                </div>
+                <div class="mb-3 px-2">
+                    <span>Full Name :</span>
+                    <p>@currentUser?.FullName</p>
+                </div>
+                <div class="mb-3 px-2">
+                    <span>Email :</span>
+                    <p>@currentUser?.Email</p>
+                </div>
+                <div class="mb-3 px-2">
+                    <span>Phone number :</span>
+                    <p>@currentUser?.PhoneNumber</p>
+                </div>
+                <div class="mb-3 px-2">
+                    <span>Date of birth :</span>
+                    <p>
+                        @string.Format("{0:dd-MM-yyyy}", currentUser?.DateOfBirth ?? DateTime.MinValue)
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("profileImage").addEventListener("click", function () {
+            let imgSrc = this.getAttribute("src"); // Lấy src từ ảnh nhỏ
+            let modalImg = document.getElementById("modalImage");
+
+            if (imgSrc && modalImg) {
+                modalImg.setAttribute("src", imgSrc); // Gán ảnh vào modal
+            } else {
+                console.error("Không tìm thấy ảnh hoặc modal!");
+            }
+        });
+    });
+</script>
+<style>
+    .profile-picture {
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    }
+    #profileImage {
+        opacity: 0.85; 
+        transition: opacity 0.2s ease-in-out; 
+    }
+
+        #profileImage:hover {
+            opacity: 1;
+        }
+
+        .card_information {
+            border-bottom-left-radius : 1rem;
+            border-bottom-right-radius : 1rem;
+            background: -webkit-linear-gradient(70deg, #ff6464 40%, #5ac8fa 40%);
+            background: -o-linear-gradient(70deg, #ff6464 40%, #5ac8fa 40%);
+            background: -moz-linear-gradient(70deg, #ff6464 40%, #5ac8fa 40%);
+            background: linear-gradient(70deg, #ff6464 40%, #5ac8fa 40%);
+        }
+            .information p {
+                padding : 0px 0px 0px 2px;   
+                box-shadow : 1px;
+                 transition-duration : 1s ease-in-out;  
+            }
+            .information p:hover {
+                text-decoration: underline;
+            }
+
+
+</style>

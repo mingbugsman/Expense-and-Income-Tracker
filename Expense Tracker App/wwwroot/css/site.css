@@ -1,3 +1,7 @@
+@font-face {
+    font-family: "Pixelify_Sans";
+    src: url("../font/PixelifySans-VariableFont_wght.ttf");
+}
 html {
     font-size: 14px;
 }
@@ -11,12 +15,12 @@ html {
 html {
     position: relative;
     min-height: 100%;
-    font-family: "Inter";
+    font-family: monospace;
 }
-
+/*
 *:not(.fa-solid):not(.fa):not(.e-icons) {
-    font-family: "Inter"
-}
+    font-family: monospace;
+} */
 
 body {
     margin-bottom: 60px;
@@ -473,4 +477,9 @@ img {
     .card-control-section.horizontal_card_layout .col-xs-6.col-sm-6.col-lg-6.col-md-6 {
         width: 80%;
     }
+}
+
+.profile-user .information p {
+    
+    font-family : Pixelify_Sans;
 }

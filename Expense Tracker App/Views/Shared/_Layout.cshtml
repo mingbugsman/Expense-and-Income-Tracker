@@ -31,26 +31,40 @@
         <div class="dock-target">
 
             <nav class="navbar sticky-top">
-                <div class="container-fluid py-2 px-4">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <div>
-                        <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" id="logoutForm" style="display: inline;">
-                           
-                                <button type="submit" class="btn btn-link p-0 border-0"
-                                        title="Log out"
-                                        style="color: #ffffff; transition: opacity 0.3s ease;">
-                                    <i class="fa fa-sign-out" aria-hidden="true"></i>
-                                </button>
-                        </form>
-                        <i class="fa-solid fa-bell"></i>
-                        <a href="/Notification/Index"><i class="fa-solid fa-message"></i></a>
-                        <a href="/Account/Profile">
+                <div class="container-fluid container-nav py-2 px-4 " style="display:flex; justify-content:end">
+                    <div class="d-flex justify-content-center">
+                        <div><i class="fa-solid fa-bell"></i></div>
+                        <div><a href="/Notification/Index"><i class="fa-solid fa-message"></i></a></div>
+                        <div class="profile" onclick="menuToggle();">
                             <img class="profile-pic" src="@(currentUser != null && currentUser.ProfileImg != null && currentUser.ProfileImg.Length > 0
                             ? $"data:image/jpeg;base64,{Convert.ToBase64String(currentUser.ProfileImg)}"
                             : Url.Content("~/images/default.jpg"))"
                                  alt="Profile Image"
-                                 style="width: 43px; height: 40px; border-radius: 50%;" />
-                        </a>
+                                 />
+                        </div>
+                        <div class="menu">
+                            <h2>@currentUser?.FullName</h2>
+                            <span>@currentUser?.Email</span>
+                            <ul>
+                                <li>
+                                    <img src="~/images/user.png" /><a href="/Account/Profile">My profile</a>
+                                </li>
+                                <li>
+                                    <img src="~/images/edit.png" /> <a href="/Account/CompleteProfile">Edit Profile</a>
+                                </li>
+                                <li>
+                                    <img src="~/images/question.png"><a href="#">Help</a>
+                                </li>
+                                <li>     
+                                    <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" id="logoutForm" style="display: inline;">
+                                        <img src="~/images/log-out.png" alt="logout"/>
+                                        <button type="submit" class="btn">Log out
+                                        </button>
+                                    </form>
+
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </nav>
@@ -115,6 +129,11 @@
     @await RenderSectionAsync("Scripts", required: false)
     <ejs-scripts></ejs-scripts>
 
-
+    <script>
+        function menuToggle() {
+            const toggleMenu = document.querySelector(".menu");
+            toggleMenu.classList.toggle("active");
+        }
+    </script>
 </body>
 </html>

@@ -1,12 +1,11 @@
 ﻿    
     @model Expense_Tracker_App.Models.Budget
-
     @{
         ViewData["PageTitle"] = Model.BudgetID == 0 ? "Create a new Budget" : "Edit Budget";
         ViewData["PageActionText"] = "Back to List";
         ViewData["PageActionUrl"] = "/Budgets";
     }
-
+    <hr/>
     <div class="row">
         <div class="col-md-7">
             <div class="widget p-5">
@@ -55,9 +54,6 @@
             </div>
         </div>
     </div>
-
-
-
     @section Scripts {
         @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     }

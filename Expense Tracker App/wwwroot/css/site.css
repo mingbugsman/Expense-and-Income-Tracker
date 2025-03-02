@@ -604,3 +604,9 @@ img {
         }
 
 
+    label, a {
+        font-size: 14px;
+        padding-right: 0;
+        color: #e9ecef;
+        font-weight: 500;
+    }

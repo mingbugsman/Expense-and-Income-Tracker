@@ -5,7 +5,7 @@
         ViewData["PageActionText"] = "Back to List";
         ViewData["PageActionUrl"] = "/RecurringTransactions";
     }
-
+    <hr />
     <div class="row">
         <div class="col-md-7">
             <div class="widget p-5" style="background-color:#212b36">
@@ -35,11 +35,14 @@
                         <span asp-validation-for="EndDate" class="text-danger"></span>
                     </div>
                     <div class="mb-3">
-                        <ejs-textbox id="Frequency" placeholder="Frequency" ejs-for="Frequency"
-                                     floatLabelType="Always"></ejs-textbox>
+                        <label>Frequency</label>
+                        <ejs-textbox id="Frequency" placeholder="Frequency..." ejs-for="Frequency"
+                                    ></ejs-textbox>
                     </div>
+
                     <div class="mb-3">
-                        <ejs-textbox id="Note" ejs-for="Note" floatLabelType="Always" placeholder="Note..." multiline="true" rows="3"></ejs-textbox>
+                        <label>Note</label>
+                        <ejs-textbox id="Note" ejs-for="Note" placeholder="Note..." multiline="true" rows="3"></ejs-textbox>
                     </div>
                     <div class="mb-3">
                         <ejs-dropdownlist id="ddlCategory" ejs-for="CategoryId"

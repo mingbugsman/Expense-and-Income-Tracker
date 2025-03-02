@@ -2,6 +2,8 @@
 using Expense_Tracker_App.Enum;
 using Expense_Tracker_App.Models;
 using Microsoft.EntityFrameworkCore;
+using X.PagedList;
+using X.PagedList.Extensions;
 
 namespace Expense_Tracker_App.Service.Impl
 {
@@ -26,12 +28,12 @@ namespace Expense_Tracker_App.Service.Impl
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<NotificationLog>> GetNotificationLogsByUserId(string userId)
+        public  IPagedList<NotificationLog> GetNotificationLogsByUserId(string userId)
         {
-            return await _context.NotificationLogs
+            return _context.NotificationLogs
                 .Where(log => log.UserId == userId)
                 .OrderByDescending(log => log.CreatedAt)
-                .ToListAsync();
+                .ToPagedList();
         }
     }
 }

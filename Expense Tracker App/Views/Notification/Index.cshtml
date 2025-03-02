@@ -1,22 +1,69 @@
-﻿@model IEnumerable<Expense_Tracker_App.Models.NotificationLog>
-
-
+﻿@model X.PagedList.IPagedList<Expense_Tracker_App.Models.NotificationLog>
+@using X.PagedList.Mvc.Core
 @{
     ViewData["Title"] = "Notification";   
 }
+<hr />
 
 <h2>Notification Logs</h2>
 
-@if (Model != null && Model.Any())
-{
-    <ul>
-        @foreach (var log in Model)
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nội dung</th>
+            <th>Loại</th>
+            <th>Ngày tạo</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
         {
-            <li>@log.Message - @log.CreatedAt</li>
+            <tr>
+                <td>@item.Log_Id</td>
+                <td>@item.SummaryMessage</td>
+                <td>@item.Log_Type_String</td>
+                <td>@item.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#detailModal" onclick="loadDetail(@item.Log_Id)">Xem</button>
+                </td>
+            </tr>
         }
-    </ul>
-}
-else
+    </tbody>
+</table>
+
+<div class="pagination-container d-flex justify-content-center">
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page }), new PagedListRenderOptions
 {
-    <p>No notifications available.</p>
-}
+    Display = PagedListDisplayMode.IfNeeded,
+    UlElementClasses = new string[] { "pagination", "pagination-lg" },
+    LiElementClasses = new string[] { "page-item" },
+    PageClasses = new string[] { "page-link" }
+})
+</div>
+
+
+<!-- Modal chi tiết -->
+<div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" style="background-color:darkslategrey">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Chi tiết thông báo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="modalMessage"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function loadDetail(id) {
+        $.get("@Url.Action("Details", "Notification")", { id: id }, function (data) {
+            console.log(data);
+            $("#modalMessage").text(data.message.message).add(" " + data.message.log_Type_String);
+        });
+    }
+</script>

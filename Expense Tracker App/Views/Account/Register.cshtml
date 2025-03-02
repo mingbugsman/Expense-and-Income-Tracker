@@ -13,25 +13,26 @@
 
                 <div class="mb-3">
                     @*syncfunction*@
+                    <label>Email</label>
                     <ejs-textbox id="email" ejs-for="Email"
-                                 placeholder="Email" floatLabelType="Always"></ejs-textbox>
+                                 placeholder="Email..." ></ejs-textbox>
                     <span asp-validation-for="Email" class="text-danger fs-6"></span>
 
                 </div>
                 <div class="mb-3">
                     @*Password*@
                     @*Syncfunction*@
-
+                    <label>Password</label>
                     <ejs-textbox type="password" ejs-for="Password" id="password"
-                                 placeholder="Password" floatLabelType="Always"></ejs-textbox>
+                                 placeholder="Password..."></ejs-textbox>
                     <span asp-validation-for="Password" class="text-danger fs-6"></span>
                 </div>
                 <div class="mb-3">
                     @*Password*@
                     @*Syncfunction*@
-
+                    <label>Confirmed password</label>
                     <ejs-textbox type="password" ejs-for="ConfirmPassword" id="ConfirmPassword"
-                                 placeholder="ConfirmPassword" floatLabelType="Always"></ejs-textbox>
+                                 placeholder="Confirm Password..."></ejs-textbox>
                     <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                 </div>
                 <a href="/Account/Login">Already have an account?</a>

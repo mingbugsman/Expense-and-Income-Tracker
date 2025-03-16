@@ -1,4 +1,4 @@
-* {
+﻿* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -13,35 +13,37 @@ html {
 
 @media (min-width: 768px) {
     html {
-        font-size: 16px;
+        font-size: 14px;
     }
 }
 
 html {
     position: relative;
-    min-height: 100%;
+    min-height: auto;
     font-family: monospace;
 }
-/*
-*:not(.fa-solid):not(.fa):not(.e-icons) {
-    font-family: monospace;
-} */
+
 
 body {
-    margin-bottom: 60px;
+    height: 100%;
+    margin: 0;
+    padding: 0;
     background-color: #12161d;
     color: #fff;
-    overflow: hidden;
+    overflow-x: hidden;
 }
+.no-transition {
+    transition: none !important;
+}
+
 
 .e-bigger {
     font-size: x-large;
 }
 
 .main-content {
-    margin-left: 290px;
     overflow-y: auto;
-    height: 92vh;
+    min-height: 100vh;
 }
 
 
@@ -609,4 +611,29 @@ img {
         padding-right: 0;
         color: #e9ecef;
         font-weight: 500;
+    }
+
+
+
+/************ PASSWORD *************/
+#password-requirements {
+    list-style: none;
+    padding-left: 0;
+}
+
+    #password-requirements li {
+        color: red;
+        font-size: 14px;
+    }
+
+    #password-requirements .valid {
+        color: green;
+    }
+
+    #password-requirements .invalid::before {
+        content: "❌ ";
+    }
+
+    #password-requirements .valid::before {
+        content: "✅ ";
     }

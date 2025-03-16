@@ -61,7 +61,7 @@
     });
 }
 
-<ejs-sidebar id="sidebar" width="290px" enableDock dockSize="100px"
+<ejs-sidebar id="sidebar" class="e-close" width="290px" enableDock dockSize="100px"
              target=".dock-target" enableGestures="false">
     <e-content-template>
         <div class="logo-wrapper">
@@ -97,11 +97,30 @@
     document.addEventListener('DOMContentLoaded', function () {
         const dockBar = document.getElementById('sidebar').ej2_instances[0];
         const toggler = document.getElementById('sidebar-toggler');
+
+        // Đóng sidebar khi nhấn vào toggler
         if (toggler) {
-            toggler.onclick = function () {
-                console.log("Sidebar toggle clicked");
+            toggler.onclick = function (event) {
+                event.stopPropagation(); // Ngăn chặn sự kiện lan ra ngoài
                 dockBar.toggle();
             };
         }
+
+        // Đóng sidebar khi click ra ngoài
+        document.addEventListener('click', function (event) {
+            if (!document.getElementById('sidebar').contains(event.target)) {
+                dockBar.hide(); // Đóng sidebar nếu click bên ngoài
+            }
+        });
+
+
+        setTimeout(() => {
+            dockBar.hide();
+        }, 100); 
+
+        // Nếu dùng AJAX/Turbolinks để chuyển trang
+        document.addEventListener('turbolinks:before-visit', function () {
+            dockBar.hide();
+        });
     });
 </script>

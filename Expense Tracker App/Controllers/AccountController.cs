@@ -204,7 +204,7 @@ namespace Expense_Tracker_App.Controllers
                 if (result.Succeeded)
                 {
                     await _signInManager.SignInAsync(user, isPersistent: false);
-                    return RedirectToAction("SetUpProfile", "Account");
+                    return RedirectToAction("CompleteProfile", "Account");
                 }
                 AddErrors(result);
             }

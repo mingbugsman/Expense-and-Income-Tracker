@@ -43,6 +43,7 @@ namespace Expense_Tracker_App.Controllers
         [Authorize]
         public async Task<IActionResult> CompleteProfile()
         {
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {

@@ -15,15 +15,15 @@ namespace Expense_Tracker_App.Controllers
             _notificationLogService = notificationLogService;
             _userManager = userManager;
         }
-        public async Task<IActionResult> Index(int? page)
+        public IActionResult Index(int? page)
         {
             int pageSize = 10;
             int pageNumber = page ?? 1;
             var notifications =  _notificationLogService.GetNotificationLogsByUserId(_userManager.GetUserId(User));
             var res = notifications.OrderByDescending(n => n.CreatedAt).ToPagedList(pageNumber, pageSize);
-            return View(res);
+            return  View(res);
         }
-        public async Task<IActionResult> Details(int id)
+        public IActionResult Details(int id)
         {
             var logs = _notificationLogService.GetNotificationLogsByUserId(_userManager.GetUserId(User));
             var log = logs.Where(l => l.Log_Id == id).FirstOrDefault();

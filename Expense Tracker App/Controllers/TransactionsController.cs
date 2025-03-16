@@ -32,7 +32,7 @@ namespace Expense_Tracker_App.Controllers
         // GET: Transactions/CreateOrEdit
         public async Task<IActionResult> CreateOrEdit(int id = 0)
         {
-            ViewBag.Categories = _transactionService.GetUserCategories(GetUserId());
+            ViewBag.Categories = await _transactionService.GetUserCategoriesAsync(GetUserId());
 
             if (id == 0)
                 return View(new Transaction());
@@ -61,7 +61,7 @@ namespace Expense_Tracker_App.Controllers
                 if (!billImage.ContentType.StartsWith("image/"))
                 {
                     ModelState.AddModelError("BillImage", "Chỉ hỗ trợ file ảnh!");
-                    ViewBag.Categories = _transactionService.GetUserCategories(userId);
+                    ViewBag.Categories = await _transactionService.GetUserCategoriesAsync(userId);
                     return View(transaction);
                 }
 
@@ -77,7 +77,7 @@ namespace Expense_Tracker_App.Controllers
             if (!success)
             {
                 ModelState.AddModelError(string.Empty, "Không thể thêm/cập nhật giao dịch. Vui lòng kiểm tra lại.");
-                ViewBag.Categories = _transactionService.GetUserCategories(userId);
+                ViewBag.Categories = await _transactionService.GetUserCategoriesAsync(userId);
                 return View(transaction);
             }
 

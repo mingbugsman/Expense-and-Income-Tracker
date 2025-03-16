@@ -9,7 +9,7 @@
 <div class="row">
     <div class="col-md-7">
         <ejs-grid id="transactions" dataSource="@Model" gridLines="None"
-                  allowSorting="true" allowPaging="true">
+                  allowSorting="true" allowPaging="true" rowSelected="onRowSelected">
             <e-grid-pagesettings pageSize="10"></e-grid-pagesettings>
             <e-grid-columns>
                 <e-grid-column headerText="Category" field="Category.Title"></e-grid-column>
@@ -18,7 +18,6 @@
                 <e-grid-column headerText="Amount" field="FormattedAmount" textAlign="Right" width="110px"></e-grid-column>
                 <e-grid-column headerText="Actions" template="#actionColumnTemplate" width="100px"></e-grid-column>
             </e-grid-columns>
-
         </ejs-grid>
     </div>
     <div class="col-md-5">
@@ -28,8 +27,42 @@
     </div>
 </div>
 
+<!-- Bootstrap Modal -->
+<div class="modal fade" id="transactionModal" tabindex="-1" aria-labelledby="transactionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="transactionModalLabel">Transaction Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex flex-column justify-content-center align-items-lg-center" style=" background-color:#212b36">
+                <p><strong>Category:</strong> <span id="modalCategory"></span></p>
+                <p><strong>Date:</strong> <span id="modalDate"></span></p>
+                <p><strong>Amount:</strong> <span id="modalAmount"></span></p>
+                <img id="modalBillImage" src="" alt="Bill image" class="rounded" style="width:200px;height:100%" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function onRowSelected(args) {
+        var data = args.data;
+
+        document.getElementById("modalCategory").textContent = data.Category.Title;
+        document.getElementById("modalDate").textContent = new Date(data.TransactionDate).toLocaleDateString();
+        document.getElementById("modalAmount").textContent = data.FormattedAmount;
 
 
+        var imgElement = document.getElementById("modalBillImage");
+        console.log(imgElement);
+        if (data.BillImage) {
+            imgElement.src = `data:image/png;base64,` + data.BillImage;
+        }
+        var modal = new bootstrap.Modal(document.getElementById('transactionModal'));
+        modal.show();
+    }
+</script>
 
 @* template action *@
 <script id="actionColumnTemplate" type="text/x-template">
@@ -40,7 +73,7 @@
         <form action="/transactions/DeleteConfirmed/${TransactionId}" method="post">
     @Html.AntiForgeryToken()
             <button type="submit" class="btn btn-sm btn-link no-a-decoration"
-            onclick="return confirm(&quot;Are sure to delete this record?&quot;)">
+                    onclick="return confirm(&quot;Are sure to delete this record?&quot;)">
                 <i class="fa-solid fa-trash-can fa-lg text-danger"></i>
             </button>
         </form>

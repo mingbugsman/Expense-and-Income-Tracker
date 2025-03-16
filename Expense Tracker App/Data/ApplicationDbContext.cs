@@ -100,6 +100,12 @@ namespace Expense_Tracker_App.Data
 
 
         }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder
+                .UseSqlServer("Server=DESKTOP-OB52AJL\\SQLEXPRESS01;Database=Expense_Tracker_DB;Trusted_Connection=True;Encrypt=True;TrustServerCertificate=True;")
+                .LogTo(Console.WriteLine, LogLevel.Information);
+        }
     }   
     
 }

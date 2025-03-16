@@ -97,6 +97,10 @@
     document.addEventListener('DOMContentLoaded', function () {
         const dockBar = document.getElementById('sidebar').ej2_instances[0];
         const toggler = document.getElementById('sidebar-toggler');
+        const sidebarElement = document.getElementById('sidebar');
+        sidebarElement.classList.add('no-transition');
+        
+        dockBar.hide();
 
         // Đóng sidebar khi nhấn vào toggler
         if (toggler) {
@@ -114,13 +118,12 @@
         });
 
 
-        setTimeout(() => {
-            dockBar.hide();
-        }, 100); 
-
         // Nếu dùng AJAX/Turbolinks để chuyển trang
         document.addEventListener('turbolinks:before-visit', function () {
             dockBar.hide();
         });
+        setTimeout(() => {
+            sidebarElement.classList.remove('no-transition');
+        }, 50);
     });
 </script>

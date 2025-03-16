@@ -493,8 +493,8 @@ img {
 
 .profile {
     position : relative;
-    width :55px;
-    height :50px;
+    width :40px;
+    height :40px;
     border-radius : 50%;
     overflow : hidden;
     cursor : pointer;
@@ -621,14 +621,20 @@ img {
     padding-left: 0;
 }
 
-    #password-requirements li {
-        color: red;
+    #password-requirements .default {
+        color: white;
         font-size: 14px;
+    }
+
+
+    #password-requirements .invalid {
+        color : red;
     }
 
     #password-requirements .valid {
         color: green;
     }
+
 
     #password-requirements .invalid::before {
         content: "❌ ";
@@ -637,3 +643,4 @@ img {
     #password-requirements .valid::before {
         content: "✅ ";
     }
+

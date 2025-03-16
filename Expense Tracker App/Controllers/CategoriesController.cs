@@ -45,7 +45,7 @@ namespace Expense_Tracker_App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateOrEdit([Bind("CategoryId,Title,Icon,Type")] Category category)
+        public async Task<IActionResult> CreateOrEdit([Bind("CategoryId,Title,Type")] Category category)
         {
             category.UserId = GetUserId();
 

@@ -1,129 +1,131 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @inject UserManager<ApplicationUser> UserManager
+
 @{
     var currentUser = await UserManager.GetUserAsync(User);
-}
-@{
-    List<Object> menuItems = new List<Object>();
 
-    menuItems.Add(new
+    // Menu gốc, bạn có thể tách ra thành JSON hoặc lấy từ CSDL
+    var myMenus = new List<dynamic>
     {
-        text = "General",
-        separator = true,
-    });
-    menuItems.Add(new
-    {
-        text = "Dashboard",
-        url = "/",
-        iconCss = "fa-solid fa-box",
-    });
-    menuItems.Add(new
-    {
-        text = "Categories",
-        url = "/Categories",
-        iconCss = "fa-solid fa-folder-closed",
-    });
-    menuItems.Add(new
-    {
-        text = "Recurring Transactions",
-        iconCss = "fa-solid fa-arrow-right-arrow-left",
-        url = "/RecurringTransactions"
-    });
-    menuItems.Add(new
-    {
-        text = "Transactions",
-        iconCss = "fa-solid fa-arrow-right-arrow-left",
-        url = "/Transactions"
-    });
-    menuItems.Add(new
-    {
-        text = "Budgets",
-        iconCss = "fa-solid fa-arrow-right-arrow-left",
-        url = "/Budgets"
-    });
-
-    menuItems.Add(new
-    {
-        text = "Extras",
-        separator = true,
-    });
-    menuItems.Add(new
-    {
-        text = "Reports",
-        iconCss = "fa-solid fa-chart-simple",
-        url = "#"
-    });
-    menuItems.Add(new
-    {
-        text = "Settings",
-        iconCss = "fa-solid fa-gear",
-        url = "#"
-    });
+        new {
+            Text = "General",
+            Icon = "fa-solid fa-folder", // Icon cho tiêu đề
+            SubItems = new List<dynamic> {
+                new { Text = "Dashboard", Url = "/", Icon = "fa-solid fa-box" },
+                new { Text = "Categories", Url = "/Categories", Icon = "fa-solid fa-folder-closed" },
+                new { Text = "Recurring Transactions", Url = "/RecurringTransactions", Icon = "fa-solid fa-arrow-right-arrow-left" },
+                new { Text = "Transactions", Url = "/Transactions", Icon = "fa-solid fa-arrow-right-arrow-left" },
+                new { Text = "Budgets", Url = "/Budgets", Icon = "fa-solid fa-arrow-right-arrow-left" }
+            }
+        },
+        new {
+            Text = "Extras",
+            Icon = "fa-solid fa-ellipsis", // Icon cho tiêu đề
+            SubItems = new List<dynamic> {
+                new { Text = "Reports", Url = "#", Icon = "fa-solid fa-chart-simple" },
+                new { Text = "Settings", Url = "#", Icon = "fa-solid fa-gear" }
+            }
+        }
+    };
 }
 
-<ejs-sidebar id="sidebar" class="e-close" width="290px" enableDock dockSize="100px"
-             target=".dock-target" enableGestures="false">
-    <e-content-template>
-        <div class="logo-wrapper">
-            <div class="w-100"></div>
-            <i id="sidebar-toggler" class="fa-solid fa-bars"></i>
+<!-- Bọc sidebar -->
+<div id="sidebar" class="sidebar closed">
+    <!-- Nút toggler (3 gạch) -->
+    <div id="sidebar-toggler" class="toggle-btn">
+        <i class="fa-solid fa-bars"></i>
+    </div>
+
+    <!-- Khu vực hồ sơ người dùng (profile) -->
+    <div class="profile-wrapper">
+        <a href="/Account/Profile">
+            <img
+                class="profile-pic"
+                src="@(currentUser != null && currentUser.ProfileImg != null && currentUser.ProfileImg.Length > 0
+                        ? $"data:image/jpeg;base64,{Convert.ToBase64String(currentUser.ProfileImg)}"
+                        : Url.Content("~/images/default.jpg"))"
+                alt="Profile Image" />
+        </a>
+        <div class="profile-info">
+            <h6>Expense Tracker App</h6>
+            <span>@currentUser?.FullName</span>
         </div>
+    </div>
 
-        <div class="profile-wrapper">
-            <a href="/Account/Profile">
-                <img class="profile-pic" src="@(currentUser != null && currentUser.ProfileImg != null && currentUser.ProfileImg.Length > 0
-    ? $"data:image/jpeg;base64,{Convert.ToBase64String(currentUser.ProfileImg)}"
-    : Url.Content("~/images/default.jpg"))"
-                     alt="Profile Image"
-                     style="width: 43px; height: 40px; border-radius: 50%;" />
-            </a>
+    <!-- Danh sách menu -->
+    <ul class="nav-list">
+        @* Lặp để render menu từ danh sách myMenus *@
+        @{
+            int index = 0;
+            foreach (var menu in myMenus)
+            {
+                var subId = $"sub_{index}"; // Tạo ID duy nhất cho mỗi sub-menu
 
-            <div class="titles d-flex flex-column ps-3">
-                <h6 class="mb-0">Expense Tracker App</h6>
-                <br />
-                <span style="color:white ">@currentUser?.FullName</span>
-            </div>
-        </div>
+                <li class="nav-item">
+                    <!-- Phần tiêu đề menu cha -->
+                    <div class="nav-link toggle-sub" data-target="#@subId">
+                        <i class="fa-solid fa-chevron-down arrow" style="margin-right: 1rem;"></i>
+                        <span>@menu.Text</span>
+                        <i class="@menu.Icon" style="margin-left: auto;"></i>
+                    </div>
 
-        <ejs-menu id="menu"
-                  items="menuItems"
-                  orientation="Vertical"
-                  hamburgerMode>
-        </ejs-menu>
-    </e-content-template>
-</ejs-sidebar>
+                    <!-- Danh sách menu con -->
+                    <ul class="sub-list" id="@subId">
+                        @foreach (var sub in menu.SubItems)
+                        {
+                            <li>
+                                <a href="@sub.Url">
+                                    @if (sub.Icon != null)
+                                    {
+                                        <i class="@sub.Icon" style="margin-right:1rem"></i>
+                                    }
+                                    @sub.Text
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </li>
 
+        @*
+                Tăng index để ID sub-list khác nhau
+        *@
+                index++;
+            }
+        }
+    </ul>
+</div>
+
+<!-- Script đóng/mở sidebar và dropdown -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const dockBar = document.getElementById('sidebar').ej2_instances[0];
+        const sidebar = document.getElementById('sidebar');
         const toggler = document.getElementById('sidebar-toggler');
-        const sidebarElement = document.getElementById('sidebar');
-        sidebarElement.classList.add('no-transition');
-        
-        dockBar.hide();
 
-        // Đóng sidebar khi nhấn vào toggler
-        if (toggler) {
-            toggler.onclick = function (event) {
-                event.stopPropagation(); // Ngăn chặn sự kiện lan ra ngoài
-                dockBar.toggle();
-            };
-        }
+        // Khi click nút toggler, đóng/mở sidebar
+        toggler.addEventListener('click', function (event) {
+            event.stopPropagation();
+            sidebar.classList.toggle('closed');
+        });
 
-        // Đóng sidebar khi click ra ngoài
+        // Đóng sidebar khi click bên ngoài
         document.addEventListener('click', function (event) {
-            if (!document.getElementById('sidebar').contains(event.target)) {
-                dockBar.hide(); // Đóng sidebar nếu click bên ngoài
+            if (!sidebar.contains(event.target)) {
+                sidebar.classList.add('closed');
             }
         });
 
+        // Mở/đóng từng sub-menu độc lập
+        document.querySelectorAll('.toggle-sub').forEach(function (toggleEl) {
+            toggleEl.addEventListener('click', function (event) {
+                event.stopPropagation();
+                const targetSelector = toggleEl.getAttribute('data-target');
+                const subList = document.querySelector(targetSelector);
+                subList.classList.toggle('open');
 
-        // Nếu dùng AJAX/Turbolinks để chuyển trang
-        document.addEventListener('turbolinks:before-visit', function () {
-            dockBar.hide();
+                // Xoay mũi tên
+                const arrowIcon = toggleEl.querySelector('.arrow');
+                arrowIcon.classList.toggle('rotate');
+            });
         });
-        setTimeout(() => {
-            sidebarElement.classList.remove('no-transition');
-        }, 50);
     });
 </script>

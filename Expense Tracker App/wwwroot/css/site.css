@@ -197,16 +197,14 @@ body {
 
 
 /*Navbar*/
-nav.navbar {
-    background-color: rgba(18, 22, 29);
-}
 
-    nav.navbar i {
-        padding: 10px;
-        border-radius: 50%;
-        font-size: 1.2rem;
-        cursor: pointer;
-    }
+
+nav.navbar i {
+   padding: 10px;
+   border-radius: 50%;
+   font-size: 1.2rem;
+   cursor: pointer;
+}
 
         nav.navbar i:hover, nav.navbar img:hover {
             cursor: pointer;
@@ -214,9 +212,7 @@ nav.navbar {
             transform: scale(1.05) translateZ(0px);
         }
 
-nav.navbar {
-    margin-left: 290px;
-}
+
 
 /*Profile Pic*/
 img.profile-pic {
@@ -230,7 +226,7 @@ img.profile-pic {
     flex-direction: row;
     align-items: center;
     background-color: rgba(72, 84, 95, 0.12);
-    padding: 16px 20px;
+    padding: 0px 20px;
     border-radius: 12px;
     cursor: pointer;
     margin-bottom: 30px;
@@ -263,71 +259,164 @@ img.profile-pic {
     }
 
 /*SideBar*/
-#sidebar {
-    background-color: #12161d;
-    border-right: 1px dashed rgba(75,82,85,0.24);
-    padding: 10px 20px;
-    overflow: hidden;
+
+/* Sidebar cơ bản */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 240px; /* Chiều rộng khi mở */
+    height: 100vh;
+    background-color: #21252b;
+    color: #fff;
+    overflow-y: auto;
+    transition: transform 0.3s ease;
+    z-index: 9999;
 }
 
-    #sidebar .e-menu-wrapper {
-        width: 100%;
-        background-color: inherit;
+    /* Khi .closed, lùi sidebar sang trái để lộ ~50px toggler */
+    .sidebar.closed {
+        transform: translateX(-205px); /* 240 - 50 = 190 */
     }
 
-#sidebar-toggler {
-    padding: 10px;
-    border-radius: 50%;
-    font-size: 1.2rem;
+/* Toggler (3 gạch) cố định ở góc, hiển thị luôn để user click mở */
+.toggle-btn {
+    position: absolute; /* Đảm bảo nút luôn nổi trên cùng sidebar */
+    top: 0px;
+    right: 0px;
+    font-size: 1.5rem;
+    padding: 8px;
     cursor: pointer;
+    border-radius: 4px;
+    background-color: #2c3136;
+    transition: background-color 0.2s;
 }
 
-    #sidebar-toggler:hover {
-        cursor: pointer;
-        background-color: #48545f14;
-        transform: scale(1.05) translateZ(0px);
+    .toggle-btn:hover {
+        background-color: #3a3f44;
     }
 
-#sidebar.e-close {
-    padding-left: 10px;
-    padding-right: 10px;
-}
-
-    #sidebar.e-close .app-logo {
-        display: none;
-    }
-
-    #sidebar.e-close .e-anchor-wrap, #sidebar.e-close .e-menu-item.e-menu-caret-icon {
-        font-size: 0px;
-    }
-
-    #sidebar.e-close .profile-wrapper .titles {
-        display: none !important;
-    }
-
-
-    #sidebar.e-open .e-anchor-wrap,
-    #sidebar.e-close .e-menu-icon, #sidebar.e-open .e-menu-icon {
-        visibility: visible;
-    }
-
-#sidebar.e-open .profile-wrapper .titles, #sidebar.e-open .app-logo {
+/* Profile */
+.profile-wrapper {
     display: flex;
+    align-items: center;
+    padding: 40px 15px 15px 15px; /* Chừa 60px để không bị đè lên toggler */
+    border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
-#sidebar.e-sidebar.e-right.e-close {
-    visibility: visible;
-    transform: translateX(0%);
+.profile-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
 }
 
-#sidebar.e-open #sidebar-toggler:before {
-    content: '\f100'
+.profile-info {
+    margin-left: 10px;
 }
 
-#sidebar.e-close #sidebar-toggler:before {
-    content: '\f101'
+    .profile-info h6 {
+        margin: 0;
+        font-size: 0.95rem;
+    }
+
+    .profile-info span {
+        font-size: 0.8rem;
+        color: #ccc;
+    }
+
+/* Danh sách menu */
+.nav-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
 }
 
+.nav-item {
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.nav-link {
+    display: flex;
+    align-items:center;
+    padding: 12px 15px;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s;
+    font-size:14px;
+}
+       
+    .nav-link:hover {
+        background-color: #2c3136;
+    }
+
+    .nav-link i.arrow {
+        transition: transform 0.3s;
+    }
+
+/* Mũi tên xoay khi mở */
+.arrow.rotate {
+    transform: rotate(180deg);
+}
+
+/* Sub-list ẩn mặc định */
+.sub-list {
+    list-style: none;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    background-color: #1b1f24;
+    margin: 0;
+    padding: 0 0 0 20px;
+}
+
+    .sub-list li a {
+        display: block;
+        padding: 10px 0;
+        color: #ddd;
+        text-decoration: none;
+    }
+
+        .sub-list li a:hover {
+            color: #fff;
+        }
+
+    /* Khi .open, bung sub-list */
+    .sub-list.open {
+        max-height: 800px; /* đủ lớn để hiển thị các item con */
+    }
+
+
+
+/* ----------------- Responsive: Mobile Dropdown ----------------- */
+@media (max-width: 768px) {
+  /* Chuyển sidebar thành dạng dropdown từ trên xuống */
+  .sidebar {
+    position: absolute;
+    top: 0px;  /* Đặt ngay dưới nút toggler, có thể điều chỉnh */
+    left: 0;
+    width: 100%;
+    height: auto;
+    transition: transform 0.3s ease;
+  }
+  /* Khi đóng, sidebar trượt lên hoàn toàn */
+    .sidebar.closed {
+        transform: translateX(0px); /* 240 - 50 = 190 */
+    }
+  .nav-list.closed {
+    transform: translateY(-100%);
+  }
+  /* Khi mở, sidebar hiện ra từ trên */
+  .nav-list:not(.closed) {
+    transform: translateY(0);
+  }
+  /* Điều chỉnh lại profile nếu cần */
+  .profile-wrapper {
+    padding: 15px;
+    margin-bottom: 0px;
+    z-index:9999;
+  }
+}
 /*Widget*/
 .widget {
     border-radius: 1rem;
@@ -644,3 +733,57 @@ img {
         content: "✅ ";
     }
 
+
+
+/*********************** EDIT PROFILE  ************************/
+/* Khi hover vào vùng chứa ảnh, hiển thị icon camera */
+.CompleteProfile {
+    border-radius: 5px;
+    padding : 2rem 0rem;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+    .profile-img-container {
+        width: 150px;
+        position: relative;
+    }
+
+        .profile-img-container img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border: 1px solid #ddd;
+            border-radius: 50%;
+        }
+
+    .camera-icon {
+        cursor: pointer;
+        border: 1px solid #ddd;
+        opacity: 0;
+        transition: opacity 0.3s;
+        z-index: 10;
+    }
+
+    .profile-img-container:hover .camera-icon {
+        opacity: 1;
+    }
+
+    .camera-icon {
+        width: 36px;
+        height: 36px; 
+        background-color: #fff; /* Màu nền */
+        border: 1px solid #ddd;
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translate(-50%);
+        background: #fff;
+        border-radius: 50%;
+        padding: 8px;
+    }
+
+        .camera-icon i {
+            color : black;
+            font-size: 18px;
+            line-height: 1;
+        }

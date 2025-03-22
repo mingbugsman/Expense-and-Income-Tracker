@@ -2,6 +2,7 @@
 using Expense_Tracker_App.Models;
 using Expense_Tracker_App.Enum;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Protocol;
 
 namespace Expense_Tracker_App.Service.Impl
 {
@@ -9,16 +10,18 @@ namespace Expense_Tracker_App.Service.Impl
     {
         private readonly ApplicationDbContext _context;
         private readonly INotificationLogService _notificationService;
-
-        public BudgetService(ApplicationDbContext context, INotificationLogService notificationService)
+        private readonly ILogger<BudgetService> logger;
+        public BudgetService(ApplicationDbContext context, INotificationLogService notificationService, ILogger<BudgetService> logger)
         {
             _context = context;
             _notificationService = notificationService;
+            this.logger = logger;
         }
 
         public async Task<bool> IsTransactionAllowed(string userId, int categoryId, decimal amount)
         {
             var now = DateTime.UtcNow;
+            await Console.Out.WriteLineAsync(userId.ToString() + " " +categoryId + " " +amount.ToString());
 
             // Lấy ngân sách đang hoạt động cho category của user
             var budget = await _context.Budgets
@@ -30,7 +33,7 @@ namespace Expense_Tracker_App.Service.Impl
 
             if (budget == null)
             {
-                return true; // Nếu không có ngân sách, không cần kiểm tra
+                return true; 
             }
 
             // Tính tổng số tiền đã chi tiêu trong khoảng thời gian ngân sách
@@ -41,6 +44,9 @@ namespace Expense_Tracker_App.Service.Impl
                          && t.TransactionDate <= budget.Budget_EndDate)
                 .SumAsync(t => t.Amount);
 
+
+            logger.LogInformation("TOTAL SPENT : " +totalSpent.ToString());
+
             // Kiểm tra nếu thêm giao dịch mới sẽ vượt quá ngân sách
             if (totalSpent + amount > budget.BudgetAmount)
             {
@@ -48,7 +54,7 @@ namespace Expense_Tracker_App.Service.Impl
                 return false; // Không cho phép giao dịch
             }
 
-            return true; // Giao dịch hợp lệ
+            return true; 
         }
 
         public async Task NotifyBudgetExceeded(string userId, int categoryId, decimal amount)

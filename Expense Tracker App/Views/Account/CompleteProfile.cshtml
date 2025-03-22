@@ -1,57 +1,86 @@
-﻿
-    @model Expense_Tracker_App.Models.UpdateProfile
-    @{
-        ViewData["Title"] = "Complete your profile";
-    }
-    <h2>Complete your profile</h2>
-    <div class="row">
-        <div class="col-md-7">
-            <div class="widget p-5" style="background-color:#212b36">
-                <form asp-action="CompleteProfile" method="post" enctype="multipart/form-data">
-                    <div class="mb-3">
-                        <label>Full name</label>
-                        <ejs-textbox id="FullName" ejs-for="FullName" placeholder="Full Name..."
-                                     ></ejs-textbox>
-                        <span asp-validation-for="FullName" class="text-danger fs-6"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label>Email</label>
-                        <ejs-textbox id="Email"
-                                     ejs-for="Email"
-                                     placeholder="Email..."
-                                     ></ejs-textbox>
-                        <span asp-validation-for="Email" class="text-danger fs-6"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label>Phone number</label>
-                        <ejs-textbox id="PhoneNumber" ejs-for="PhoneNumber" placeholder="Phone Number..."
-                                     ></ejs-textbox>
-                        <span asp-validation-for="PhoneNumber" class="text-danger fs-6"></span>
-                    </div>
+﻿@using Microsoft.AspNetCore.Identity
+@model Expense_Tracker_App.Models.UpdateProfile
+@inject UserManager<ApplicationUser> UserManager
 
-                    <div class="mb-3">
-                        <ejs-datepicker id="DateOfBirth" ejs-for="DateOfBirth" placeholder="Date Of Birth"
-                                        floatLabelType="Always" format="yyyy-MM-dd" value="@Model.DateOfBirth"> </ejs-datepicker>
-                        <span asp-validation-for="DateOfBirth" class="text-danger fs-6"></span>
+@{
+    ViewData["Title"] = "Chỉnh sửa hồ sơ";
+    var currentUser = await UserManager.GetUserAsync(User);
+}
+
+
+<div class="container mt-5">
+    <h3>Edit Profile User</h3>
+    <!-- Đóng gói toàn bộ phần chỉnh sửa trong một form -->
+    <form class="CompleteProfile" asp-action="CompleteProfile" method="post" enctype="multipart/form-data">
+        <div class="row justify-content-center">
+            <div class="col-md-9">
+                <div class="d-flex flex-column flex-md-row align-items-center">
+                    <!-- Phần ảnh đại diện -->
+                    <div class="me-md-5 mb-3 mb-md-0 text-center" style="width:150px;">
+                        <div class="position-relative profile-img-container">
+                            <img id="profilePreview" src="@((currentUser.ProfileImg != null) ? $"data:image/jpeg;base64,{Convert.ToBase64String(currentUser.ProfileImg)}" : Url.Content("~/images/default.jpg"))"
+                                 alt="Ảnh đại diện" class="img-fluid rounded-circle border"
+                                 style="width:150px; height:150px; object-fit: cover;">
+                            <!-- Label dùng làm nút trigger upload, mặc định ẩn -->
+                            <label for="fileUpload" class="camera-icon">
+                                <i class="fas fa-camera"></i>
+                            </label>
+                            <!-- Input file ẩn -->
+                            <input type="file" id="fileUpload" name="ProfileImg" accept=".jpg,.png" style="display:none;">
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label>Upload profile image</label>
-                        <ejs-uploader id="uploadFiles" name="ProfileImg" autoUpload="false"
-                                      allowedExtensions=".jpg"></ejs-uploader>
-                        <span asp-validation-for="ProfileImg" class="text-danger fs-6"></span>
+                    <!-- Phần form chỉnh sửa thông tin -->
+                    <div class="flex-grow-1">
+                        <div class="mb-3">
+                            <label for="FullName">Full Name</label>
+                            <ejs-textbox id="FullName" ejs-for="@Model.FullName" placeholder="Full name..."></ejs-textbox>
+                            <span asp-validation-for="FullName" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label for="Email">Email</label>
+                            <ejs-textbox id="Email" ejs-for="@Model.Email" placeholder="Note..."></ejs-textbox>
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label for="PhoneNumber">Phone number</label>
+                            <ejs-textbox id="PhoneNumber" ejs-for="@Model.PhoneNumber" placeholder="Phone number..."></ejs-textbox>
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label for="DateOfBirth" class="form-label">Date of Birth</label>
+                            <ejs-datepicker id="DateOfBirth" ejs-for="@Model.DateOfBirth"
+                                            format="yyyy-MM-dd" value="@Model.DateOfBirth"></ejs-datepicker>
+                            <span asp-validation-for="DateOfBirth" class="text-danger fs-6"></span>
+                        </div>
+                        <ejs-button id="submit" content="Update information" cssClass="e-success"></ejs-button>
                     </div>
-                    <ejs-button id="submit" content="Submit" type="submit" cssClass="e-success"></ejs-button>
-                </form>
+                </div>
+
             </div>
         </div>
-        <div class="col-md-5">
-                <div class="widget h-100 d-flex justify-content-center align-items-center"
-                     style="background-color:#212b36">
-                    <i class="fa-solid fa-user"></i>
-               </div>   
-    </div>
-    @section Scripts {
-        @{
-            await Html.RenderPartialAsync("_ValidationScriptsPartial");
-        }
+        @Html.AntiForgeryToken()
+    </form>
+</div>
+
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script>
+        // Xử lý preview ảnh khi người dùng chọn file
+        const fileInput = document.getElementById('fileUpload');
+        fileInput.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    document.getElementById('profilePreview').src = event.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+}
+

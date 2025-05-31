@@ -1,0 +1,227 @@
+@using Expense_Tracker_App.Models.ViewModels
+@model IEnumerable<UserRoleViewModel>
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Quản lý người dùng";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Quản lý người dùng</h2>
+    </div>
+
+    <!-- Search Form -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" action="@Url.Action("Users")" class="row g-3">
+                <div class="col-md-12 mb-3">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="searchTerm" placeholder="Search by username, email or full name..." value="@ViewData["CurrentSearch"]">
+                        <button class="btn btn-outline-secondary" type="submit">
+                            <i class="bi bi-search"></i> Tìm kiếm
+                        </button>
+                        @if (!string.IsNullOrEmpty(ViewData["CurrentSearch"]?.ToString()) || 
+                             !string.IsNullOrEmpty(ViewData["SelectedRole"]?.ToString()))
+                        {
+                            <a href="@Url.Action("Users")" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle"></i> Clear
+                            </a>
+                        }
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Quyền</label>
+                    <select class="form-select" name="role">
+                        <option value="">Tất cả quyền</option>
+                        @foreach (var role in ViewBag.Roles)
+                        {
+                            <option value="@role" selected="@(ViewData["SelectedRole"]?.ToString() == role)">
+                                @role
+                            </option>
+                        }
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Quản lý người dùng</h5>
+            <a href="#" class="btn btn-primary btn-sm">
+                <i class="bi bi-plus-circle me-1"></i>Thêm người dùng mới
+            </a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Tên người dùng</th>
+                            <th>Email</th>
+                            <th>Tên đầy đủ</th>
+                            <th>Số điện thoại</th>
+                            <th>Các quyền</th>
+                            <th>Các hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var userRole in Model)
+                        {
+                            <tr>
+                                <td>@userRole.User.UserName</td>
+                                <td>@userRole.User.Email</td>
+                                <td>@userRole.User.FullName</td>
+                                <td>@userRole.User.PhoneNumber</td>
+                                <td>
+                                    @foreach (var role in userRole.Roles)
+                                    {
+                                        <span class="badge bg-primary me-1">@role</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown">
+                                            Quản lý quyền
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <form asp-action="ToggleUserRole" method="post" class="d-inline">
+                                                    <input type="hidden" name="userId" value="@userRole.User.Id" />
+                                                    <input type="hidden" name="role" value="Admin" />
+                                                    <button type="submit" class="dropdown-item">
+                                                        @(userRole.Roles.Contains("Admin") ? "Xóa quyền Admin" : "Thêm quyền Admin")
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li>
+                                                <form asp-action="ToggleUserRole" method="post" class="d-inline">
+                                                    <input type="hidden" name="userId" value="@userRole.User.Id" />
+                                                    <input type="hidden" name="role" value="User" />
+                                                    <button type="submit" class="dropdown-item">
+                                                        @(userRole.Roles.Contains("User") ? "Xóa quyền User" : "Thêm quyền User")
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-outline-info" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#editUserModal"
+                                            data-user-id="@userRole.User.Id"
+                                            data-user-name="@userRole.User.UserName"
+                                            data-user-email="@userRole.User.Email"
+                                            data-user-fullname="@userRole.User.FullName"
+                                            data-user-phone="@userRole.User.PhoneNumber"
+                                            data-user-dob="@(userRole.User.DateOfBirth?.ToString("yyyy-MM-dd"))">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <a href="#" class="btn btn-sm btn-outline-danger">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit User Modal -->
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title  text-dark" id="editUserModalLabel">Chỉnh sửa thông tin người dùng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="EditUser" asp-controller="Account" method="post" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <input type="hidden" id="editUserId" name="id" />
+                    <div class="mb-3">
+                        <label for="editEmail" class="form-label text-dark">Email</label>
+                        <input type="email" class="form-control" id="editEmail" name="Email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editFullName" class="form-label text-dark">Họ và tên</label>
+                        <input type="text" class="form-control" id="editFullName" name="FullName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editPhoneNumber" class="form-label text-dark">Số điện thoại</label>
+                        <input type="tel" class="form-control" id="editPhoneNumber" name="PhoneNumber">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editDateOfBirth" class="form-label text-dark">Ngày sinh</label>
+                        <input type="date" class="form-control" id="editDateOfBirth" name="DateOfBirth">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editProfileImg" class="form-label text-dark">Ảnh đại diện</label>
+                        <input type="file" class="form-control" id="editProfileImg" name="ProfileImg" accept="image/*">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Pagination Controls -->
+<nav>
+    <ul class="pagination">
+        <!-- Previous Page Link -->
+        @if (ViewBag.CurrentPage > 1)
+        {
+            <li class="page-item">
+                <a class="page-link" href="?page=@(ViewBag.CurrentPage - 1)&pageSize=10&searchTerm=@ViewData["CurrentSearch"]">Previous</a>
+            </li>
+        }
+
+        <!-- Page Numbers -->
+        @for (int i = 1; i <= ViewBag.TotalPages; i++)
+        {
+            <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                <a class="page-link" href="?page=@i&pageSize=10&searchTerm=@ViewData["CurrentSearch"]">@i</a>
+            </li>
+        }
+
+        <!-- Next Page Link -->
+        @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+        {
+            <li class="page-item">
+                <a class="page-link" href="?page=@(ViewBag.CurrentPage + 1)&pageSize=10&searchTerm=@ViewData["CurrentSearch"]">Next</a>
+            </li>
+        }
+    </ul>
+</nav>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const editUserModal = document.getElementById('editUserModal');
+            if (editUserModal) {
+                editUserModal.addEventListener('show.bs.modal', function(event) {
+                    const button = event.relatedTarget;
+                    const userId = button.getAttribute('data-user-id');
+                    const userName = button.getAttribute('data-user-name');
+                    const userEmail = button.getAttribute('data-user-email');
+                    const userFullName = button.getAttribute('data-user-fullname');
+                    const userPhone = button.getAttribute('data-user-phone');
+                    const userDob = button.getAttribute('data-user-dob');
+
+                    const modal = this;
+                    modal.querySelector('#editUserId').value = userId;
+                    modal.querySelector('#editUserName').value = userName;
+                    modal.querySelector('#editEmail').value = userEmail;
+                    modal.querySelector('#editFullName').value = userFullName;
+                    modal.querySelector('#editPhoneNumber').value = userPhone;
+                    modal.querySelector('#editDateOfBirth').value = userDob;
+                });
+            }
+        });
+    </script>
+}

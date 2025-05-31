@@ -1,0 +1,126 @@
+@{
+    Layout = null;
+    var confirmationLink = ViewData["ConfirmationLink"] as string;
+    var emailType = ViewData["EmailType"] as string;
+    var userName = ViewData["UserName"] as string;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xác nhận Email</title>
+    <link rel="stylesheet" href="~/css/site.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .email-wrapper {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin: 20px 0;
+        }
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            background: linear-gradient(135deg, #4dabf7 0%, #3b82f6 100%);
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #ffffff;
+            margin: 0;
+            font-size: 24px;
+        }
+        .content {
+            color: #333333;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #4dabf7 0%, #3b82f6 100%);
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eeeeee;
+            color: #666666;
+            font-size: 14px;
+        }
+        .logo {
+            max-width: 150px;
+            margin-bottom: 20px;
+        }
+        .greeting {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333333;
+        }
+        .note {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            font-size: 14px;
+            color: #666666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="email-wrapper">
+            <div class="header">
+                <h1>@(emailType == "ChangeEmail" ? "Xác nhận thay đổi Email" : "Xác nhận Email")</h1>
+            </div>
+            <div class="content">
+                <p class="greeting">Xin chào @userName,</p>
+                
+                @if (emailType == "ChangeEmail")
+                {
+                    <p>Chúng tôi nhận được yêu cầu thay đổi địa chỉ email của bạn. Để xác nhận thay đổi này, vui lòng nhấp vào nút bên dưới:</p>
+                }
+                else
+                {
+                    <p>Cảm ơn bạn đã đăng ký sử dụng ứng dụng của chúng tôi. Để hoàn tất quá trình đăng ký, vui lòng nhấp vào nút bên dưới để xác minh địa chỉ email của bạn:</p>
+                }
+
+                <div style="text-align: center;">
+                    <a href="@confirmationLink" class="button">Xác nhận Email</a>
+                </div>
+
+                <div class="note">
+                    <p><strong>Lưu ý:</strong> Nếu bạn không yêu cầu thay đổi này, vui lòng bỏ qua email này hoặc liên hệ với đội ngũ hỗ trợ của chúng tôi nếu bạn có bất kỳ lo ngại nào.</p>
+                </div>
+
+                <p>Nếu nút trên không hoạt động, bạn cũng có thể sao chép và dán liên kết sau vào trình duyệt của mình:</p>
+                <p style="word-break: break-all; color: #666666;">@confirmationLink</p>
+            </div>
+            <div class="footer">
+                <p>Đây là email tự động, vui lòng không trả lời email này.</p>
+                <p>&copy; @DateTime.Now.Year Expense Tracker App. Bảo lưu mọi quyền.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

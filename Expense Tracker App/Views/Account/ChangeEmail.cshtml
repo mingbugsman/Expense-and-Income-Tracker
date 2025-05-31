@@ -1,0 +1,112 @@
+@model Expense_Tracker_App.Models.AccountViewModels.ChangeEmailViewModel
+@{
+    ViewData["Title"] = "Change Email";
+}
+
+<style>
+    .login-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #1a1f25 0%, #17181f 100%);
+    }
+
+    .login-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 3rem;
+        width: 100%;
+        max-width: 450px;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+
+    .login-title {
+        color: #ffffff;
+        font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        color: #e9ecef;
+        font-size: 0.9rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .e-input-group {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 10px !important;
+        overflow: hidden;
+    }
+
+    .e-input {
+        color: #ffffff !important;
+        padding: 1rem !important;
+        font-size: 1rem !important;
+        background: transparent !important;
+    }
+
+    .validation-error {
+        color: #ff6b6b;
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 1rem !important;
+        border-radius: 10px !important;
+        font-size: 1rem !important;
+        font-weight: 600 !important;
+        background: linear-gradient(135deg, #4dabf7 0%, #3b82f6 100%) !important;
+        border: none !important;
+        color: white !important;
+        margin-top: 1rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+    }
+</style>
+
+<div class="login-container">
+    <div class="login-card">
+        <h1 class="login-title">Thay đổi email</h1>
+        <form asp-action="ChangeEmail" method="post">
+            <div asp-validation-summary="ModelOnly" class="validation-error"></div>
+            
+            <div class="form-group">
+                <label class="form-label">Email mới</label>
+                <ejs-textbox id="newEmail" 
+                            ejs-for="NewEmail"
+                            placeholder="Enter your new email"
+                            cssClass="modern-input">
+                </ejs-textbox>
+                <span asp-validation-for="NewEmail" class="validation-error"></span>
+            </div>
+
+            <ejs-button id="submit" 
+                       content="Change Email" 
+                       cssClass="submit-btn" 
+                       type="submit">
+            </ejs-button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

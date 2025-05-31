@@ -30,6 +30,7 @@ namespace Expense_Tracker_App.Models
 
         public byte[]? ProfileImg { get; set; } // Lưu ảnh dưới dạng BLOB
 
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         // Quan hệ 1-n với Category
         public virtual ICollection<Category> Categories { get; set; } = [];

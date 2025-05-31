@@ -63,8 +63,9 @@ namespace Expense_Tracker_App.Controllers
 
             // Số dư (Balance)
             decimal Balance = TotalIncome - TotalExpense;
-            CultureInfo culture = new("en-US") { NumberFormat = { CurrencyPositivePattern = 1 } };
-            ViewBag.Balance = string.Format(culture, "{0:C}", Balance);
+            CultureInfo culture = new("vi-VN");
+            ViewBag.Balance = string.Format(culture, "{0:c0}", Balance);
+
 
             // 🥧 **Doughnut Chart - Chi tiêu theo danh mục**
             ViewBag.DoughnutChartData = SelectedTransactions

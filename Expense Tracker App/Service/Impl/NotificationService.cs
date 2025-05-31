@@ -22,18 +22,46 @@ namespace Expense_Tracker_App.Service.Impl
             {
                 UserId = userId,
                 Log_Type = type,
-                Message = message
+                Message = message,
+                CreatedAt = DateTime.UtcNow,
+                IsRead = false
             };
             _context.NotificationLogs.Add(log);
             await _context.SaveChangesAsync();
         }
 
-        public  IPagedList<NotificationLog> GetNotificationLogsByUserId(string userId)
+        public IPagedList<NotificationLog> GetNotificationLogsByUserId(string userId, int pageNumber = 1, int pageSize = 10)
         {
             return _context.NotificationLogs
+                .AsNoTracking()
                 .Where(log => log.UserId == userId)
                 .OrderByDescending(log => log.CreatedAt)
-                .ToPagedList();
+                .ToPagedList(pageNumber, pageSize);
+        }
+
+        public IPagedList<NotificationLog> GetNotificationLogsByUserId(string userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int GetUnreadNotificationCount(string userId)
+        {
+            return _context.NotificationLogs
+                .AsNoTracking()
+                .Count(log => log.UserId == userId && !log.IsRead);
+        }
+
+        public void MarkNotificationsAsRead(string userId)
+        {
+            var unreadNotifications = _context.NotificationLogs
+                .Where(log => log.UserId == userId && !log.IsRead);
+
+            foreach (var notification in unreadNotifications)
+            {
+                notification.IsRead = true;
+            }
+
+            _context.SaveChanges();
         }
     }
 }

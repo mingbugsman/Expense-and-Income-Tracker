@@ -1,43 +1,154 @@
-﻿   
-    @using Microsoft.AspNetCore.Http
-    @using Microsoft.AspNetCore.Identity
-    @model Expense_Tracker_App.Models.AccountViewModels.LoginViewModel
-    @inject SignInManager<ApplicationUser> SignInManager
+﻿@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Identity
+@model Expense_Tracker_App.Models.AccountViewModels.LoginViewModel
+@inject SignInManager<ApplicationUser> SignInManager
 
+@{
+    ViewData["Title"] = "Đăng nhập";
+}
 
-    @{
-        ViewData["Title"] = "Log in";
+<style>
+    .login-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #1a1f25 0%, #17181f 100%);
     }
-    <div class="row">
-        <div class="col-md-7">
-            <div class="p-5" style="background-color:#212b36">
-                <form asp-route-returnurl="@ViewData["ReturnUrl"]"  method="post">
-                    <h4>Use a local account to log in.</h4>
 
-             
-                    <div class="mb-3">
-                        @*syncfunction*@
-                        <label>Email</label>
-                        <ejs-textbox id="email" ejs-for="Email"
-                        placeholder="Email..."></ejs-textbox>
-                        <span asp-validation-for="Email" class="text-danger fs-6"></span>
+    .login-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 3rem;
+        width: 100%;
+        max-width: 450px;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        transition: transform 0.3s ease;
+    }
 
-                    </div>
-                    <div class="mb-3">
-                        <label>Password</label>
-                        <ejs-textbox type="password" ejs-for="Password" id="password"
-                        placeholder="Password..." ></ejs-textbox>
-                        <span asp-validation-for="Password" class="text-danger fs-6"></span>
-                    </div>
-                    <div asp-validation-summary="All" class="text-danger fs-6 mb-3"></div>
-                    <div class="d-flex justify-content-between align-content-center m-1">
-                        <a href="/Account/Register">Don't have an account?</a>
-                        <a href="#">Forgot Password ?</a>
-                    </div>
-                    <br />
-                        <ejs-button id="submit" content="Submit" type="Submit" cssClass="e-success"></ejs-button>
-  
-                </form>
+    .login-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .login-title {
+        color: #ffffff;
+        font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        color: #e9ecef;
+        font-size: 0.9rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .e-input-group {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 10px !important;
+        overflow: hidden;
+    }
+
+    .e-input {
+        color: #ffffff !important;
+        padding: 1rem !important;
+        font-size: 1rem !important;
+        background: transparent !important;
+    }
+
+    .e-input::placeholder {
+        color: rgba(255, 255, 255, 0.5) !important;
+    }
+
+    .links-container {
+        display: flex;
+        justify-content: space-between;
+        margin: 1rem 0;
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 1rem !important;
+        border-radius: 10px !important;
+        font-size: 1rem !important;
+        font-weight: 600 !important;
+        background: linear-gradient(135deg, #4dabf7 0%, #3b82f6 100%) !important;
+        border: none !important;
+        color: white !important;
+        margin-top: 1rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+    }
+
+
+</style>
+
+<div class="login-container">
+    <div class="login-card">
+        <h1 class="login-title">Chào mừng trở lại</h1>
+        <form asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <ejs-textbox id="email" 
+                            ejs-for="Email"
+                            placeholder="Nhập email"
+                            cssClass="modern-input">
+                </ejs-textbox>
+                <span asp-validation-for="Email" class="validation-error"></span>
             </div>
-        </div>
+
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <ejs-textbox type="password" 
+                            ejs-for="Password" 
+                            id="password"
+                            placeholder="Nhập mật khẩu"
+                            cssClass="modern-input">
+                </ejs-textbox>
+                <span asp-validation-for="Password" class="validation-error"></span>
+            </div>
+
+            <div asp-validation-summary="All" class="validation-summary"></div>
+
+            <div class="links-container">
+                <a href="/Account/Register" class="auth-link">Tạo tài khoản</a>
+                <a href="/Account/ForgotPassword" class="auth-link">Quên mật khẩu?</a>
+            </div>
+
+            <ejs-button id="submit" 
+                       content="Sign In" 
+                       cssClass="submit-btn" 
+                       type="submit">
+            </ejs-button>
+        </form>
     </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.e-input').forEach(input => {
+            input.addEventListener('focus', () => {
+                input.closest('.e-input-group').style.transform = 'scale(1.02)';
+                input.closest('.e-input-group').style.transition = 'transform 0.3s ease';
+            });
+
+            input.addEventListener('blur', () => {
+                input.closest('.e-input-group').style.transform = 'scale(1)';
+            });
+        });
+    </script>
+}

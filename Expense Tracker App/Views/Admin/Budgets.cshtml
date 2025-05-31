@@ -1,0 +1,296 @@
+@model IEnumerable<Expense_Tracker_App.Models.Budget>
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Quản lý ngân sách";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Quản lý ngân sách</h2>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBudgetModal">
+            <i class="bi bi-plus-circle me-2"></i>Thêm mới ngân sách
+        </button>
+    </div>
+
+    <!-- Search Form -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" action="@Url.Action("Budgets")" class="row g-3">
+                <div class="col-md-12 mb-3">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="searchTerm" placeholder="Search by user or category..." value="@ViewData["CurrentSearch"]">
+                        <button class="btn btn-outline-secondary" type="submit">
+                            <i class="bi bi-search"></i> Tìm kiếm
+                        </button>
+                        @if (!string.IsNullOrEmpty(ViewData["CurrentSearch"]?.ToString()) || 
+                             ViewData["SelectedCategory"] != null || 
+                             ViewData["SelectedUser"] != null || 
+                             ViewData["StartDate"] != null || 
+                             ViewData["EndDate"] != null || 
+                             ViewData["MinAmount"] != null || 
+                             ViewData["MaxAmount"] != null)
+                        {
+                            <a href="@Url.Action("Budgets")" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle"></i> Clear
+                            </a>
+                        }
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label text-dark">Người dùng</label>
+                    <select class="form-select" name="userId">
+                        <option value="">All Users</option>
+                        @foreach (var user in ViewBag.Users)
+                        {
+                            <option value="@user.Id" selected="@(ViewData["SelectedUser"]?.ToString() == user.Id)">
+                                @user.UserName
+                            </option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label text-dark">Loại</label>
+                    <select class="form-select" name="categoryId">
+                        <option value="">All Categories</option>
+                        @foreach (var category in ViewBag.Categories)
+                        {
+                            <option value="@category.CategoryId" selected="@(ViewData["SelectedCategory"]?.ToString() == category.CategoryId.ToString())">
+                                @category.Title
+                            </option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label text-dark">Ngày bắt đầu</label>
+                    <input type="date" class="form-control" name="startDate" value="@ViewData["StartDate"]">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label text-dark">Ngày kết thúc</label>
+                    <input type="date" class="form-control" name="endDate" value="@ViewData["EndDate"]">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label text-dark">Khoảng Ngân sách</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" name="minAmount" placeholder="Min" value="@ViewData["MinAmount"]" step="0.01">
+                        <input type="number" class="form-control" name="maxAmount" placeholder="Max" value="@ViewData["MaxAmount"]" step="0.01">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Người dùng</th>
+                        <th>Danh mục</th>
+                        <th>Số tiền</th>
+                        <th>Ngày bắt đầu</th>
+                        <th>Ngày kết thúc</th>
+                        <th>Trạng thái</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var budget in Model)
+                    {
+                        <tr>
+                            <td>@(budget.User?.UserName ?? "Không có")</td>
+                            <td>@(budget.Category?.Title ?? "Không có")</td>
+                            <td>@budget.BudgetAmount.ToString("C")</td>
+                            <td>@budget.Budget_StartDate.ToString("dd/MM/yyyy")</td>
+                            <td>@budget.Budget_EndDate.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                @{
+                                    var today = DateTime.Today;
+                                    var status = "Đang hoạt động";
+                                    if (budget.Budget_EndDate < today)
+                                    {
+                                        status = "Hết hạn";
+                                    }
+                                    else if (budget.Budget_StartDate > today)
+                                    {
+                                        status = "Sắp tới";
+                                    }
+                                }
+                                <span class="badge @(status == "Đang hoạt động" ? "bg-success" : status == "Hết hạn" ? "bg-danger" : "bg-warning")">
+                                    @status
+                                </span>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-info me-2" onclick="editBudget(@budget.BudgetID)">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteBudget(@budget.BudgetID)">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Phân trang -->
+<nav>
+    <ul class="pagination">
+        @if (ViewBag.CurrentPage > 1)
+        {
+            <li class="page-item">
+                <a class="page-link" href="?page=@(ViewBag.CurrentPage - 1)&pageSize=10&searchTerm=@ViewData["CurrentSearch"]">Trước</a>
+            </li>
+        }
+
+        @for (int i = 1; i <= ViewBag.TotalPages; i++)
+        {
+            <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                <a class="page-link" href="?page=@i&pageSize=10&searchTerm=@ViewData["CurrentSearch"]">@i</a>
+            </li>
+        }
+
+        @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+        {
+            <li class="page-item">
+                <a class="page-link" href="?page=@(ViewBag.CurrentPage + 1)&pageSize=10&searchTerm=@ViewData["CurrentSearch"]">Tiếp</a>
+            </li>
+        }
+    </ul>
+</nav>
+
+<!-- Modal Thêm mới -->
+<div class="modal fade" id="addBudgetModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-dark">Thêm ngân sách mới</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form asp-action="AddBudget" method="post">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label text-dark">Người dùng</label>
+                        <select class="form-select" name="UserId" required>
+                            @foreach (var user in ViewBag.Users)
+                            {
+                                <option value="@user.Id">@user.UserName</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-dark">Danh mục</label>
+                        <select class="form-select" name="CategoryId" required>
+                            @foreach (var category in ViewBag.Categories)
+                            {
+                                <option value="@category.CategoryId">@category.Title</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-dark">Số tiền</label>
+                        <input type="number" class="form-control" name="BudgetAmount" step="0.01" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-dark">Ngày bắt đầu</label>
+                        <input type="date" class="form-control" name="Budget_StartDate" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-dark">Ngày kết thúc</label>
+                        <input type="date" class="form-control" name="Budget_EndDate" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary">Lưu ngân sách</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Chỉnh sửa -->
+<div class="modal fade" id="editBudgetModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-dark">Chỉnh sửa ngân sách</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form asp-action="EditBudget" method="post">
+                <input type="hidden" id="editBudgetId" name="BudgetID">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label text-dark">Người dùng</label>
+                        <select class="form-select" id="editBudgetUserId" name="UserId" required>
+                            @foreach (var user in ViewBag.Users)
+                            {
+                                <option value="@user.Id">@user.UserName</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-dark">Danh mục</label>
+                        <select class="form-select" id="editBudgetCategoryId" name="CategoryId" required>
+                            @foreach (var category in ViewBag.Categories)
+                            {
+                                <option value="@category.CategoryId">@category.Title</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-dark">Số tiền</label>
+                        <input type="number" class="form-control" id="editBudgetAmount" name="BudgetAmount" step="0.01" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-dark">Ngày bắt đầu</label>
+                        <input type="date" class="form-control" id="editBudgetStartDate" name="Budget_StartDate" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-dark">Ngày kết thúc</label>
+                        <input type="date" class="form-control" id="editBudgetEndDate" name="Budget_EndDate" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function editBudget(id) {
+            // Fetch budget data and populate modal
+            fetch(`/Admin/GetBudget/${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('editBudgetId').value = data.budgetID;
+                    document.getElementById('editBudgetUserId').value = data.userId;
+                    document.getElementById('editBudgetCategoryId').value = data.categoryId;
+                    document.getElementById('editBudgetAmount').value = data.budgetAmount;
+                    document.getElementById('editBudgetStartDate').value = data.budget_StartDate.split('T')[0];
+                    document.getElementById('editBudgetEndDate').value = data.budget_EndDate.split('T')[0];
+                    new bootstrap.Modal(document.getElementById('editBudgetModal')).show();
+                });
+        }
+
+        function deleteBudget(id) {
+            if (confirm('Are you sure you want to delete this budget?')) {
+                fetch(`/Admin/DeleteBudget/${id}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(() => {
+                    window.location.reload();
+                });
+            }
+        }
+    </script>
+}

@@ -1,0 +1,75 @@
+@model Expense_Tracker_App.Models.ViewModels.ReportViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Báo cáo giao dịch & hoạt động người dùng";
+}
+
+<h2>Báo cáo giao dịch & hoạt động người dùng</h2>
+
+<form method="get" asp-action="Reports" class="mb-4">
+    <div class="row align-items-end">
+        <div class="col-md-2">
+            <label>Kiểu thống kê</label>
+            @Html.DropDownListFor(model => model.FilterType,
+                     new SelectList(new[]
+                     {
+                        new { Value = "day", Text = "Theo ngày" },
+                        new { Value = "month", Text = "Theo tháng" },
+                        new { Value = "year", Text = "Theo năm" }
+                        }, "Value", "Text", Model.FilterType),
+                     new { @class = "form-control", name = "filterType" })
+
+        </div>
+        <div class="col-md-3">
+            <label>Từ ngày</label>
+            <input type="date" name="startDate" class="form-control" value="@(Model.StartDate?.ToString("yyyy-MM-dd") ?? "")" />
+        </div>
+        <div class="col-md-3">
+            <label>Đến ngày</label>
+            <input type="date" name="endDate" class="form-control" value="@(Model.EndDate?.ToString("yyyy-MM-dd") ?? "")" />
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary">Lọc</button>
+        </div>
+    </div>
+</form>
+
+<div class="row">
+    <div class="col-md-12">
+        <h4>Biểu đồ số lượng giao dịch & người dùng hoạt động</h4>
+        <canvas id="reportChart"></canvas>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        var labels = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.FilterLabels));
+        var transactionCounts = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.TransactionCounts));
+        var activeUserCounts = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.ActiveUserCounts));
+
+        var ctx = document.getElementById('reportChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Số lượng giao dịch',
+                        data: transactionCounts,
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)'
+                    },
+                    {
+                        label: 'Người dùng hoạt động',
+                        data: activeUserCounts,
+                        backgroundColor: 'rgba(255, 99, 132, 0.6)'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+    </script>
+}

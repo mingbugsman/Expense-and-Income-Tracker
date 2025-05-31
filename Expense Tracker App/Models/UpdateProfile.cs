@@ -12,7 +12,7 @@ namespace Expense_Tracker_App.Models
             [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "Email không hợp lệ!")]
             public string Email { get; set; }
 
-            [MaxLength(15)]
+            [Required,MaxLength(15)]
             public string? PhoneNumber { get; set; }
 
             [Required, DataType(DataType.Date)]

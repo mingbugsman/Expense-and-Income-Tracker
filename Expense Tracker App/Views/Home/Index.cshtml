@@ -1,9 +1,244 @@
 ﻿@{
-    ViewData["Title"] = "Welcome to Expense and Income Tracker";
+    ViewData["Title"] = "Chào mừng đến với Ứng dụng Theo dõi Chi tiêu và Thu nhập";
 }
 
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #1a1f25 0%, #17181f 100%);
+        min-height: 100vh;
+        position: relative;
+        overflow: hidden;
+    }
 
-<div>
+    .hero-pattern {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+        background-size: 50px 50px;
+        opacity: 0.5;
+    }
 
+    .hero-content {
+        position: relative;
+        z-index: 1;
+        padding: 6rem 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
 
+    .hero-title {
+        font-size: 3.5rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(135deg, #4dabf7 0%, #3b82f6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: fadeInUp 1s ease;
+    }
+
+    .hero-subtitle {
+        font-size: 1.25rem;
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 3rem;
+        max-width: 600px;
+        line-height: 1.6;
+        animation: fadeInUp 1s ease 0.2s;
+    }
+
+    .cta-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 4rem;
+        animation: fadeInUp 1s ease 0.4s;
+    }
+
+    .cta-button {
+        padding: 1rem 2rem;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        text-decoration: none;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .cta-primary {
+        background: linear-gradient(135deg, #4dabf7 0%, #3b82f6 100%);
+        color: white;
+        border: none;
+    }
+
+    .cta-secondary {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .cta-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+        animation: fadeInUp 1s ease 0.6s;
+    }
+
+    .feature-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 2rem;
+        transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .feature-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #4dabf7 0%, #3b82f6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .feature-title {
+        color: white;
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .feature-description {
+        color: rgba(255, 255, 255, 0.7);
+        line-height: 1.6;
+    }
+
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.5rem;
+        }
+
+        .cta-buttons {
+            flex-direction: column;
+        }
+
+        .feature-card {
+            text-align: center;
+        }
+    }
+</style>
+
+<div class="hero-section">
+    <div class="hero-pattern"></div>
+    <div class="hero-content">
+        <h1 class="hero-title">Kiểm soát tài chính của bạn</h1>
+        <p class="hero-subtitle">
+            Theo dõi chi tiêu, giám sát thu nhập và đạt được mục tiêu tài chính với giải pháp theo dõi chi tiêu mạnh mẽ và dễ sử dụng của chúng tôi.
+        </p>
+
+        <div class="cta-buttons">
+            <a href="/Account/Register" class="cta-button cta-primary">Bắt đầu miễn phí</a>
+            <a href="/Account/Login" class="cta-button cta-secondary">Đăng nhập</a>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3 class="feature-title">Theo dõi chi tiêu</h3>
+                <p class="feature-description">
+                    Dễ dàng ghi lại và phân loại chi tiêu hàng ngày. Nhận thông tin chi tiết về mẫu chi tiêu của bạn.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-wallet"></i>
+                </div>
+                <h3 class="feature-title">Quản lý thu nhập</h3>
+                <p class="feature-description">
+                    Theo dõi nhiều nguồn thu nhập và có cái nhìn rõ ràng về thu nhập của bạn theo thời gian.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+                <h3 class="feature-title">Phân tích trực quan</h3>
+                <p class="feature-description">
+                    Biểu đồ và đồ thị đẹp mắt để trực quan hóa dữ liệu tài chính và đưa ra quyết định sáng suốt.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-bullseye"></i>
+                </div>
+                <h3 class="feature-title">Mục tiêu ngân sách</h3>
+                <p class="feature-description">
+                    Thiết lập và theo dõi mục tiêu tài chính. Nhận thông báo khi bạn sắp đạt đến giới hạn ngân sách.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <h3 class="feature-title">Tương thích di động</h3>
+                <p class="feature-description">
+                    Truy cập dữ liệu tài chính của bạn ở mọi nơi, mọi lúc. Ứng dụng của chúng tôi hoạt động mượt mà trên mọi thiết bị.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3 class="feature-title">Bảo mật & Riêng tư</h3>
+                <p class="feature-description">
+                    Dữ liệu tài chính của bạn được mã hóa và bảo mật. Chúng tôi ưu tiên quyền riêng tư và bảo mật của bạn.
+                </p>
+            </div>
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    <script>
+        // Add intersection observer for smooth scroll animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        document.querySelectorAll('.feature-card').forEach(card => {
+            observer.observe(card);
+        });
+    </script>
+} 

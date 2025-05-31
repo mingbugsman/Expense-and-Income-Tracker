@@ -4,128 +4,322 @@
 @{
     var currentUser = await UserManager.GetUserAsync(User);
 
-    // Menu gốc, bạn có thể tách ra thành JSON hoặc lấy từ CSDL
+    // Menu items
     var myMenus = new List<dynamic>
     {
         new {
-            Text = "General",
-            Icon = "fa-solid fa-folder", // Icon cho tiêu đề
+            Text = "Tính năng",
+            Icon = "fa-solid fa-folder",
             SubItems = new List<dynamic> {
-                new { Text = "Dashboard", Url = "/", Icon = "fa-solid fa-box" },
-                new { Text = "Categories", Url = "/Categories", Icon = "fa-solid fa-folder-closed" },
-                new { Text = "Recurring Transactions", Url = "/RecurringTransactions", Icon = "fa-solid fa-arrow-right-arrow-left" },
-                new { Text = "Transactions", Url = "/Transactions", Icon = "fa-solid fa-arrow-right-arrow-left" },
-                new { Text = "Budgets", Url = "/Budgets", Icon = "fa-solid fa-arrow-right-arrow-left" }
+                new { Text = "Tổng quan", Url = "/", Icon = "fa-solid fa-box" },
+                new { Text = "Danh mục", Url = "/Categories", Icon = "fa-solid fa-folder-closed" },
+                new { Text = "Giao dịch định kỳ", Url = "/RecurringTransactions", Icon = "fa-solid fa-arrow-right-arrow-left" },
+                new { Text = "Giao dịch", Url = "/Transactions", Icon = "fa-solid fa-arrow-right-arrow-left" },
+                new { Text = "Ngân sách", Url = "/Budgets", Icon = "fa-solid fa-arrow-right-arrow-left" }
             }
         },
         new {
-            Text = "Extras",
-            Icon = "fa-solid fa-ellipsis", // Icon cho tiêu đề
+            Text = "Khác",
+            Icon = "fa-solid fa-ellipsis",
             SubItems = new List<dynamic> {
-                new { Text = "Reports", Url = "#", Icon = "fa-solid fa-chart-simple" },
-                new { Text = "Settings", Url = "#", Icon = "fa-solid fa-gear" }
+                new { Text = "Liên hệ", Url = "/Home/Contact", Icon = "fa-solid fa-book" },
+                new { Text = "Về chúng tôi", Url = "/Home/About", Icon = "fa-solid fa-users"},
+                new { Text = "Cài đặt", Url = "/Settings", Icon = "fa-solid fa-gear" }
             }
         }
     };
+
+    if (currentUser != null && await UserManager.IsInRoleAsync(currentUser, "Admin"))
+    {
+        myMenus.Add(new
+        {
+            Text = "Quản trị",
+            Icon = "fa-solid fa-shield-halved",
+            SubItems = new List<dynamic>
+            {
+                new { Text = "Bảng điều khiển", Url = "/Admin/DashBoard", Icon = "fa-solid fa-chart-line" }
+            }
+        });
+    }
+
+    var isAdmin = await UserManager.IsInRoleAsync(currentUser, "Admin");
 }
 
-<!-- Bọc sidebar -->
-<div id="sidebar" class="sidebar closed">
-    <!-- Nút toggler (3 gạch) -->
-    <div id="sidebar-toggler" class="toggle-btn">
-        <i class="fa-solid fa-bars"></i>
-    </div>
 
-    <!-- Khu vực hồ sơ người dùng (profile) -->
-    <div class="profile-wrapper">
-        <a href="/Account/Profile">
-            <img
-                class="profile-pic"
-                src="@(currentUser != null && currentUser.ProfileImg != null && currentUser.ProfileImg.Length > 0
-                        ? $"data:image/jpeg;base64,{Convert.ToBase64String(currentUser.ProfileImg)}"
-                        : Url.Content("~/images/default.jpg"))"
-                alt="Profile Image" />
+<style>
+    .navbar {
+        background: rgba(26, 31, 37, 0.95);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 0.5rem 1rem;
+    }
+
+    .navbar-brand {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        text-decoration: none;
+        color: #ffffff;
+    }
+
+    .brand-logo {
+        width: 40px;
+        height: 40px;
+        object-fit: contain;
+    }
+
+    .brand-text {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #ffffff;
+    }
+
+    .nav-item {
+        position: relative;
+    }
+
+    .nav-link {
+        color: rgba(255, 255, 255, 0.7) !important;
+        padding: 0.5rem 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .nav-link:hover {
+        color: #ffffff !important;
+        background: rgba(77, 171, 247, 0.1);
+    }
+
+    .nav-link.active {
+        color: #ffffff !important;
+        background: rgba(77, 171, 247, 0.2);
+    }
+
+    .dropdown-menu {
+        background: rgba(26, 31, 37, 0.95);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        margin-top: 0.5rem;
+    }
+
+    .dropdown-item {
+        color: rgba(255, 255, 255, 0.7);
+        padding: 0.5rem 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .dropdown-item:hover {
+        color: #ffffff;
+        background: rgba(77, 171, 247, 0.1);
+    }
+
+    .dropdown-item.active {
+        color: #ffffff;
+        background: rgba(77, 171, 247, 0.2);
+    }
+
+    .dropdown-item i {
+        width: 20px;
+        text-align: center;
+    }
+
+    .user-info-dropdown {
+        color: #ffffff;
+    }
+
+    .user-info-dropdown h6 {
+        color: #ffffff;
+        font-weight: 500;
+    }
+
+    .user-info-dropdown small {
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .profile-dropdown {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .profile-link {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: rgba(255, 255, 255, 0.7) !important;
+        text-decoration: none;
+        padding: 0.5rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .profile-link:hover {
+        color: #ffffff !important;
+        background: rgba(77, 171, 247, 0.1);
+    }
+
+    .user-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #4dabf7;
+    }
+
+    .user-info {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.2;
+    }
+
+    .user-name {
+        color: #ffffff;
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+
+    .user-role {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.8rem;
+    }
+
+    .notification-link {
+        color: rgba(255, 255, 255, 0.7) !important;
+        text-decoration: none;
+        padding: 0.5rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .notification-link:hover {
+        color: #ffffff !important;
+        background: rgba(77, 171, 247, 0.1);
+    }
+
+    .notification-link.active {
+        color: #ffffff !important;
+        background: rgba(77, 171, 247, 0.2);
+    }
+
+    #notification-badge {
+        position: absolute;
+        top: 0;
+        right: 0;
+        transform: translate(50%, -50%);
+        font-size: 0.7rem;
+        padding: 0.25rem 0.5rem;
+    }
+</style>
+
+
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <a href="/" class="navbar-brand">
+            <img src="~/images/Amerikaya.png" alt="Logo" class="brand-logo" />
+            <span class="brand-text">Quản lý chi tiêu</span>
         </a>
-        <div class="profile-info">
-            <h6>Expense Tracker App</h6>
-            <span>@currentUser?.FullName</span>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <ul class="navbar-nav me-auto">
+                @foreach (var menu in myMenus)
+                {
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            @menu.Text
+                        </a>
+                        <ul class="dropdown-menu">
+                            @foreach (var subItem in menu.SubItems)
+                            {
+                                <li>
+                                    <a class="dropdown-item @(Context.Request.Path.StartsWithSegments(subItem.Url) ? "active" : "")" 
+                                       href="@subItem.Url">
+                                        <i class="@subItem.Icon"></i> @subItem.Text
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </li>
+                }
+            </ul>
+
+            <div class="profile-dropdown">
+                <a asp-controller="Notification" asp-action="Index" class="notification-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Notification" ? "active" : "")">
+                    <i class="fa-solid fa-bell"></i>
+                    <span id="notification-badge" class="badge bg-danger" style="display: none;">0</span>
+                </a>
+                <div class="dropdown">
+                    <a class="profile-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <img class="user-avatar"
+                             src="@(currentUser != null && currentUser.ProfileImg != null && currentUser.ProfileImg.Length > 0
+                                             ? $"data:image/jpeg;base64,{Convert.ToBase64String(currentUser.ProfileImg)}"
+                                             : Url.Content("~/images/default.jpg"))"
+                             alt="Ảnh đại diện" />
+                        <div class="user-info">
+                            <span class="user-name">@(currentUser?.UserName ?? "Khách")</span>
+                            <span class="user-role">@(isAdmin ? "Quản trị viên" : "Người dùng")</span>
+                        </div>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <div class="px-3 py-2 user-info-dropdown">
+                                <h6 class="mb-0">@currentUser?.FullName</h6>
+                                <small>@currentUser?.Email</small>
+                            </div>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/Account/Profile">
+                                <i class="fa-solid fa-user"></i> Hồ sơ của tôi
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/Account/CompleteProfile">
+                                <i class="fa-solid fa-user-pen"></i> Chỉnh sửa hồ sơ
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/Home/HelpCenter">
+                                <i class="fa-solid fa-circle-question"></i> Trung tâm trợ giúp
+                            </a>
+                        </li>
+                        <li>
+                            <form asp-controller="Account" asp-action="Logout" method="post">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="dropdown-item">
+                                    <i class="fa-solid fa-sign-out-alt"></i> Đăng xuất
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
+</nav>
 
-    <!-- Danh sách menu -->
-    <ul class="nav-list">
-        @* Lặp để render menu từ danh sách myMenus *@
-        @{
-            int index = 0;
-            foreach (var menu in myMenus)
-            {
-                var subId = $"sub_{index}"; // Tạo ID duy nhất cho mỗi sub-menu
 
-                <li class="nav-item">
-                    <!-- Phần tiêu đề menu cha -->
-                    <div class="nav-link toggle-sub" data-target="#@subId">
-                        <i class="fa-solid fa-chevron-down arrow" style="margin-right: 1rem;"></i>
-                        <span>@menu.Text</span>
-                        <i class="@menu.Icon" style="margin-left: auto;"></i>
-                    </div>
-
-                    <!-- Danh sách menu con -->
-                    <ul class="sub-list" id="@subId">
-                        @foreach (var sub in menu.SubItems)
-                        {
-                            <li>
-                                <a href="@sub.Url">
-                                    @if (sub.Icon != null)
-                                    {
-                                        <i class="@sub.Icon" style="margin-right:1rem"></i>
-                                    }
-                                    @sub.Text
-                                </a>
-                            </li>
-                        }
-                    </ul>
-                </li>
-
-        @*
-                Tăng index để ID sub-list khác nhau
-        *@
-                index++;
-            }
-        }
-    </ul>
-</div>
-
-<!-- Script đóng/mở sidebar và dropdown -->
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const sidebar = document.getElementById('sidebar');
-        const toggler = document.getElementById('sidebar-toggler');
-
-        // Khi click nút toggler, đóng/mở sidebar
-        toggler.addEventListener('click', function (event) {
-            event.stopPropagation();
-            sidebar.classList.toggle('closed');
-        });
-
-        // Đóng sidebar khi click bên ngoài
-        document.addEventListener('click', function (event) {
-            if (!sidebar.contains(event.target)) {
-                sidebar.classList.add('closed');
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', async function () {
+            try {
+                const response = await fetch('/Notification/UnreadCount');
+                const data = await response.json();
+                const badge = document.getElementById('notification-badge');
+                if (data.count > 0) {
+                    badge.innerText = data.count;
+                    badge.style.display = 'inline-block';
+                }
+            } catch (error) {
+                console.error("Không thể tải số thông báo chưa đọc.");
             }
         });
+    </script>
+}
 
-        // Mở/đóng từng sub-menu độc lập
-        document.querySelectorAll('.toggle-sub').forEach(function (toggleEl) {
-            toggleEl.addEventListener('click', function (event) {
-                event.stopPropagation();
-                const targetSelector = toggleEl.getAttribute('data-target');
-                const subList = document.querySelector(targetSelector);
-                subList.classList.toggle('open');
 
-                // Xoay mũi tên
-                const arrowIcon = toggleEl.querySelector('.arrow');
-                arrowIcon.classList.toggle('rotate');
-            });
-        });
-    });
-</script>

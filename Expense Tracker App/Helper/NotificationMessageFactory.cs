@@ -6,32 +6,24 @@ namespace Expense_Tracker_App.Service
 {
     public static class NotificationMessageFactory
     {
-        public static string GenerateMessage(NotificationType type, params object[] parameters)
-        {
-            return type switch
-            {
-                NotificationType.Category => $"Bạn đã {parameters.ElementAtOrDefault(0) ?? "thực hiện"} loại giao dịch là {parameters.ElementAtOrDefault(1)?? "không rõ." } Ngày thực hiên : {parameters.ElementAtOrDefault(2)}",
-                NotificationType.Transaction =>
-                    $"Bạn đã {parameters.ElementAtOrDefault(0) ?? "thực hiện"} giao dịch {parameters.ElementAtOrDefault(1) ?? "không rõ"} với số tiền {parameters.ElementAtOrDefault(2) ?? 0:C}. " +
-                    $"Ngày giao dịch : {parameters.ElementAtOrDefault(3) ?? "không rõ"}",
+        public static string Category(string action, string categoryName, DateTime date)
+            => $"Bạn đã {action} loại giao dịch là {categoryName}. Ngày thực hiện: {date:dd/MM/yyyy}";
 
-                NotificationType.RecurringTransaction =>
-                    $"Giao dịch định kỳ {parameters.ElementAtOrDefault(0) ?? "không rõ"} vừa được tạo và sẽ diễn ra {parameters.ElementAtOrDefault(1) ?? "không xác định"}. " +
-                    $"Ngày thực hiên : {parameters.ElementAtOrDefault(2)}",
+        public static string Transaction(string action, string transactionName, decimal amount, DateTime date)
+            => $"Bạn đã {action} giao dịch {transactionName} với số tiền {amount:C}. Ngày giao dịch: {date:dd/MM/yyyy}";
 
-                NotificationType.BudgetLimitExceed =>
-                    $"Cảnh báo! Bạn đã vượt quá ngân sách {parameters.ElementAtOrDefault(0) ?? 0:C} cho {parameters.ElementAtOrDefault(1) ?? "không rõ danh mục"}. " +
-                    $"Ngày thực hiện : {parameters.ElementAtOrDefault(2)}",
+        public static string RecurringTransaction(string name, string frequency, DateTime date)
+            => $"Giao dịch định kỳ {name} vừa được tạo và sẽ diễn ra {frequency}. Ngày thực hiện: {date:dd/MM/yyyy}";
 
-                NotificationType.GeneralInfo =>
-                    parameters.ElementAtOrDefault(0)?.ToString() ?? "Thông báo chung từ hệ thống. " +
-                    $"Ngày thực hiện : {parameters.ElementAtOrDefault(1)}",
+        public static string BudgetLimitExceed(decimal amount, string categoryName, DateTime date)
+            => $"Cảnh báo! Bạn đã vượt quá ngân sách {amount:C} cho {categoryName}. Ngày thực hiện: {date:dd/MM/yyyy}";
 
-                NotificationType.Warning =>
-                    $"Cảnh báo hệ thống: {parameters.ElementAtOrDefault(0) ?? "Không rõ nội dung"}.",
+        public static string GeneralInfo(string info, DateTime date)
+            => $"{info} Ngày thực hiện: {date:dd/MM/yyyy}";
 
-                _ => "Không xác định loại thông báo."
-            };
-        }
+        public static string Warning(string content)
+            => $"Cảnh báo hệ thống: {content}.";
+
+        public static string Unknown() => "Không xác định loại thông báo.";
     }
 }

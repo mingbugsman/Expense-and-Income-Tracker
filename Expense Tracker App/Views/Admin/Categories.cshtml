@@ -1,0 +1,182 @@
+@model IEnumerable<Expense_Tracker_App.Models.Category>
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Quản lý danh mục";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Quản lý danh mục</h2>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+            <i class="bi bi-plus-circle me-2"></i>Add New Category
+        </button>
+    </div>
+
+    <!-- Search Form -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" action="@Url.Action("Categories")" class="row g-3">
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="searchTerm" placeholder="Search by title or description..." value="@ViewData["CurrentSearch"]">
+                        <button class="btn btn-outline-secondary" type="submit">
+                            <i class="bi bi-search"></i> Search
+                        </button>
+                        @if (!string.IsNullOrEmpty(ViewData["CurrentSearch"]?.ToString()))
+                        {
+                            <a href="@Url.Action("Categories")" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle"></i> Clear
+                            </a>
+                        }
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var category in Model)
+                        {
+                            <tr>
+                                <td>@category.Title</td>
+                                <td>
+                                    <button class="btn btn-sm btn-info me-2" onclick="editCategory(@category.CategoryId)">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteCategory(@category.CategoryId)">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pagination Controls -->
+<nav>
+    <ul class="pagination">
+        <!-- Previous Page Link -->
+        @if (ViewBag.CurrentPage > 1)
+        {
+            <li class="page-item">
+                <a class="page-link" href="?page=@(ViewBag.CurrentPage - 1)&pageSize=10&searchTerm=@ViewData["CurrentSearch"]">Previous</a>
+            </li>
+        }
+
+        <!-- Page Numbers -->
+        @for (int i = 1; i <= ViewBag.TotalPages; i++)
+        {
+            <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                <a class="page-link" href="?page=@i&pageSize=10&searchTerm=@ViewData["CurrentSearch"]">@i</a>
+            </li>
+        }
+
+        <!-- Next Page Link -->
+        @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+        {
+            <li class="page-item">
+                <a class="page-link" href="?page=@(ViewBag.CurrentPage + 1)&pageSize=10&searchTerm=@ViewData["CurrentSearch"]">Next</a>
+            </li>
+        }
+    </ul>
+</nav>
+
+<!-- Add Category Modal -->
+<div class="modal fade" id="addCategoryModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-dark">Add New Category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form asp-action="AddCategory" method="post">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label text-dark">Title</label>
+                        <input type="text" class="form-control" name="Title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-dark">Description</label>
+                        <textarea class="form-control" name="Description" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Category</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Category Modal -->
+<div class="modal fade" id="editCategoryModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-dark">Edit Category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form asp-action="EditCategory" method="post">
+                <input type="hidden" id="editCategoryId" name="CategoryId">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label text-dark">Title</label>
+                        <input type="text" class="form-control" id="editCategoryTitle" name="Title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-dark">Description</label>
+                        <textarea class="form-control" id="editCategoryDescription" name="Description" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function editCategory(id) {
+            fetch(`/Admin/GetCategory/${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('editCategoryId').value = data.categoryId;
+                    document.getElementById('editCategoryTitle').value = data.title;
+                    document.getElementById('editCategoryDescription').value = data.description;
+                    new bootstrap.Modal(document.getElementById('editCategoryModal')).show();
+                });
+        }
+
+        function deleteCategory(id) {
+            if (confirm('Are you sure you want to delete this category?')) {
+                fetch(`/Admin/DeleteCategory/${id}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(() => {
+                    window.location.reload();
+                });
+            }
+        }
+    </script>
+} 

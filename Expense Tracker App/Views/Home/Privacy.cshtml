@@ -1,6 +1,174 @@
 ﻿@{
-    ViewData["Title"] = "Privacy Policy";
+    ViewData["Title"] = "Chính sách bảo mật";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<style>
+    .privacy-section {
+        padding: 4rem 0;
+        background: linear-gradient(135deg, #1a1f25 0%, #17181f 100%);
+        min-height: calc(100vh - 200px);
+    }
+
+    .privacy-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+
+    .privacy-content {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 3rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .privacy-title {
+        color: #fff;
+        font-size: 2.5rem;
+        margin-bottom: 2rem;
+        background: linear-gradient(135deg, #4dabf7 0%, #3b82f6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .privacy-section-title {
+        color: #fff;
+        font-size: 1.5rem;
+        margin: 2rem 0 1rem;
+        font-weight: 600;
+    }
+
+    .privacy-text {
+        color: rgba(255, 255, 255, 0.7);
+        line-height: 1.8;
+        margin-bottom: 1.5rem;
+    }
+
+    .privacy-list {
+        list-style: none;
+        padding: 0;
+        margin: 1rem 0;
+    }
+
+    .privacy-list li {
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 1rem;
+        padding-left: 1.5rem;
+        position: relative;
+    }
+
+    .privacy-list li:before {
+        content: "•";
+        color: #4dabf7;
+        position: absolute;
+        left: 0;
+    }
+
+    .last-updated {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.9rem;
+        margin-top: 3rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    @@media (max-width: 768px) {
+        .privacy-container {
+            padding: 0 1rem;
+        }
+
+        .privacy-content {
+            padding: 2rem;
+        }
+
+        .privacy-title {
+            font-size: 2rem;
+        }
+    }
+</style>
+
+<div class="privacy-section">
+    <div class="privacy-container">
+        <div class="privacy-content">
+            <h1 class="privacy-title">Chính sách bảo mật</h1>
+
+            <p class="privacy-text">
+                Tại Expense Tracker, chúng tôi coi trọng quyền riêng tư của bạn. Chính sách bảo mật này giải thích cách chúng tôi thu thập, sử dụng, tiết lộ và bảo vệ thông tin của bạn khi bạn sử dụng ứng dụng theo dõi chi tiêu của chúng tôi.
+            </p>
+
+            <h2 class="privacy-section-title">Thông tin chúng tôi thu thập</h2>
+            <p class="privacy-text">
+                Chúng tôi thu thập thông tin mà bạn cung cấp trực tiếp cho chúng tôi, bao gồm:
+            </p>
+            <ul class="privacy-list">
+                <li>Thông tin tài khoản (tên, địa chỉ email, mật khẩu)</li>
+                <li>Thông tin hồ sơ (ảnh đại diện, thông tin liên hệ)</li>
+                <li>Dữ liệu tài chính (chi tiêu, thu nhập, ngân sách)</li>
+                <li>Chi tiết giao dịch (số tiền, danh mục, ngày tháng)</li>
+            </ul>
+
+            <h2 class="privacy-section-title">Cách chúng tôi sử dụng thông tin của bạn</h2>
+            <p class="privacy-text">
+                Chúng tôi sử dụng thông tin đã thu thập cho nhiều mục đích:
+            </p>
+            <ul class="privacy-list">
+                <li>Để cung cấp và duy trì dịch vụ của chúng tôi</li>
+                <li>Để thông báo cho bạn về những thay đổi trong dịch vụ của chúng tôi</li>
+                <li>Để cung cấp hỗ trợ khách hàng</li>
+                <li>Để thu thập phân tích hoặc thông tin có giá trị để cải thiện dịch vụ của chúng tôi</li>
+                <li>Để theo dõi việc sử dụng dịch vụ của chúng tôi</li>
+                <li>Để phát hiện, ngăn chặn và giải quyết các vấn đề kỹ thuật</li>
+            </ul>
+
+            <h2 class="privacy-section-title">Bảo mật dữ liệu</h2>
+            <p class="privacy-text">
+                Chúng tôi triển khai các biện pháp bảo mật phù hợp để bảo vệ thông tin cá nhân của bạn. Dữ liệu của bạn được mã hóa trong quá trình truyền tải và lưu trữ. Chúng tôi sử dụng các giao thức bảo mật và phương pháp mã hóa tiêu chuẩn ngành để đảm bảo thông tin của bạn luôn được bảo mật.
+            </p>
+
+            <h2 class="privacy-section-title">Chia sẻ và tiết lộ dữ liệu</h2>
+            <p class="privacy-text">
+                Chúng tôi không bán, trao đổi hoặc chuyển thông tin cá nhân của bạn cho bên thứ ba. Chúng tôi chỉ có thể chia sẻ thông tin của bạn trong các trường hợp sau:
+            </p>
+            <ul class="privacy-list">
+                <li>Với sự đồng ý của bạn</li>
+                <li>Để tuân thủ nghĩa vụ pháp lý</li>
+                <li>Để bảo vệ và bảo vệ quyền và tài sản của chúng tôi</li>
+                <li>Để ngăn chặn hoặc điều tra các hành vi sai trái có thể xảy ra</li>
+            </ul>
+
+            <h2 class="privacy-section-title">Quyền của bạn</h2>
+            <p class="privacy-text">
+                Bạn có quyền:
+            </p>
+            <ul class="privacy-list">
+                <li>Truy cập thông tin cá nhân của bạn</li>
+                <li>Sửa dữ liệu không chính xác</li>
+                <li>Yêu cầu xóa dữ liệu của bạn</li>
+                <li>Phản đối việc xử lý dữ liệu của bạn</li>
+                <li>Di chuyển dữ liệu</li>
+            </ul>
+
+            <h2 class="privacy-section-title">Cookie và theo dõi</h2>
+            <p class="privacy-text">
+                Chúng tôi sử dụng cookie và các công nghệ theo dõi tương tự để theo dõi hoạt động trên dịch vụ của chúng tôi và lưu giữ một số thông tin nhất định. Bạn có thể hướng dẫn trình duyệt của mình từ chối tất cả cookie hoặc thông báo khi cookie đang được gửi.
+            </p>
+
+            <h2 class="privacy-section-title">Thay đổi đối với chính sách bảo mật này</h2>
+            <p class="privacy-text">
+                Chúng tôi có thể cập nhật Chính sách bảo mật của chúng tôi theo thời gian. Chúng tôi sẽ thông báo cho bạn về bất kỳ thay đổi nào bằng cách đăng Chính sách bảo mật mới trên trang này và cập nhật ngày "Cập nhật lần cuối".
+            </p>
+
+            <h2 class="privacy-section-title">Liên hệ với chúng tôi</h2>
+            <p class="privacy-text">
+                Nếu bạn có bất kỳ câu hỏi nào về Chính sách bảo mật này, vui lòng liên hệ với chúng tôi tại:
+            </p>
+            <ul class="privacy-list">
+                <li>Email: privacy@expensetracker.com</li>
+                <li>Điện thoại: +1 (555) 123-4567</li>
+            </ul>
+
+            <p class="last-updated">Cập nhật lần cuối: @DateTime.Now.ToString("dd/MM/yyyy")</p>
+        </div>
+    </div>
+</div>

@@ -57,5 +57,24 @@ namespace Expense_Tracker_App.Service.Impl
         {
             return await _context.Categories.AnyAsync(c => c.CategoryId == id);
         }
+
+        public async Task<List<Category>> SearchCategoriesAsync(string userId, string? searchTerm, string? type)
+        {
+            var query = _context.Categories
+                .Where(c => c.UserId == userId);
+
+            // Apply search filters if provided
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(c => c.Title.Contains(searchTerm));
+            }
+
+            if (!string.IsNullOrWhiteSpace(type))
+            {
+                query = query.Where(c => c.Type == type);
+            }
+
+            return await query.OrderBy(c => c.Title).ToListAsync();
+        }
     }
 }

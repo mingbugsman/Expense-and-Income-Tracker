@@ -12,7 +12,7 @@
                 <i class="fa-solid fa-dollar-sign fa-2xl"></i>
             </div>
             <div class="d-flex flex-column m-auto py-3">
-                <span class="lead">Total Income</span>
+                <span class="lead">Tổng thu nhập</span>
                 <p class="display-7">@ViewBag.TotalIncome</p>
             </div>
         </div>
@@ -24,7 +24,7 @@
                 <i class="fa-solid fa-dollar-sign fa-2xl"></i>
             </div>
             <div class="d-flex flex-column m-auto py-3">
-                <span class="lead">Total Expense</span>
+                <span class="lead">Tổng chi tiêu</span>
                 <p class="display-7">@ViewBag.TotalExpense</p>
             </div>
         </div>
@@ -36,7 +36,7 @@
                 <i class="fa-solid fa-dollar-sign fa-2xl"></i>
             </div>
             <div class="d-flex flex-column m-auto py-3">
-                <span class="lead">Balance</span>
+                <span class="lead">Số dư</span>
                 <p class="display-7">@ViewBag.Balance</p>
             </div>
         </div>
@@ -50,7 +50,7 @@
     <div class="col-md-4 mb-4">
         <div class="widget chart">
             <div class="p-4">
-                <h5 class="fw-bold">Expense By Category</h5>
+                <h5 class="fw-bold"> Chi tiêu theo danh mục</h5>
             </div>
             <ejs-accumulationchart id="doughnutchart" enableSmartLabels background="#1a222b">
                 <e-accumulation-series-collection>
@@ -71,7 +71,7 @@
     <div class="col-md-8 mb-4">
         <div class="widget chart">
             <div class="p-4">
-                <h5 class="fw-bold">Income vs Expense</h5>
+                <h5 class="fw-bold">Chi tiêu vs Thu nhập</h5>
             </div>
             <ejs-chart id="spline-chart" background="#1a222b"
                        palettes=@(new string[]{"#54ffa9","#ffe91a"})>
@@ -89,9 +89,9 @@
                 </e-chart-chartarea>
                 <e-series-collection>
                     <e-series dataSource="@ViewBag.SplineChartData" xName="Day" width="3"
-                              yName="Income" name="Income" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Spline"></e-series>
+                              yName="Income" name="Thu nhập" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Spline"></e-series>
                     <e-series dataSource="@ViewBag.SplineChartData" xName="Day" width="3"
-                              yName="Expense" name="Expense" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Spline"></e-series>
+                              yName="Expense" name="Chi tiêu" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Spline"></e-series>
                 </e-series-collection>
                 <e-chart-legendsettings position="Top" alignment="Far" toggleVisibility="false">
                     <e-legendsettings-textstyle color="#fff" size="1rem"></e-legendsettings-textstyle>
@@ -108,17 +108,17 @@
     <div class="col-md-6">
         <div class="widget">
             <div class="p-4">
-                <h5 class="fw-bold">Recent Transactions</h5>
+                <h5 class="fw-bold">Giao dịch gần đây</h5>
             </div>
             <div class="px-4 pb-4">
                 <ejs-grid id="recent-transactions"
                           dataSource="@ViewBag.RecentTransactions" gridLines="None"
-                allowSorting="true" allowPaging="true">
+                          allowSorting="true" allowPaging="true">
                     <e-grid-pagesettings pageSize="5"></e-grid-pagesettings>
                     <e-grid-columns>
-                        <e-grid-column headerText="Category" field="Category.Title"></e-grid-column>
-                        <e-grid-column headerText="Date" field="TransactionDate" type="date" format="MMM-dd-yy"></e-grid-column>
-                        <e-grid-column headerText="Amount" field="FormattedAmount" textAlign="Right"></e-grid-column>
+                        <e-grid-column headerText="Danh mục" field="Category.Title"></e-grid-column>
+                        <e-grid-column headerText="Ngày" field="TransactionDate" type="date" format="MMM-dd-yy"></e-grid-column>
+                        <e-grid-column headerText="Số tiền" field="FormattedAmount" textAlign="Right"></e-grid-column>
                     </e-grid-columns>
                 </ejs-grid>
             </div>
@@ -127,7 +127,7 @@
     <div class="col-md-6">
         <div class="widget h-100">
             <div class="d-flex justify-content-center align-items-center h-100">
-                <span><i class="fa-solid fa-plus fa-2xl"></i> Widget</span>
+                <span><i class="fa-solid fa-plus fa-2xl"></i> Tiện ích</span>
             </div>
         </div>
     </div>

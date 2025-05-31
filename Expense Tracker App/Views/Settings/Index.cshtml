@@ -1,0 +1,227 @@
+@model SettingsViewModel
+@{
+    ViewData["Title"] = "Cài đặt";
+    ViewData["PageTitle"] = "Cài đặt";
+}
+
+<style>
+    .settings-section {
+        padding: 2rem 0;
+    }
+
+    .settings-container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .settings-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .settings-title {
+        color: #fff;
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .settings-title i {
+        color: #4dabf7;
+    }
+
+    .info-group {
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 10px;
+    }
+
+    .info-label {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.9rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .info-value {
+        color: #fff;
+        font-size: 1.1rem;
+        font-weight: 500;
+    }
+
+    .btn-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: linear-gradient(135deg, #4dabf7 0%, #3b82f6 100%);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-link:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(77, 171, 247, 0.3);
+        color: white;
+    }
+
+    .btn-link i {
+        font-size: 1.1rem;
+    }
+
+    .alert {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        color: #fff;
+    }
+
+    .alert-success {
+        border-color: #4caf50;
+        background: rgba(76, 175, 80, 0.1);
+    }
+
+    .alert-danger {
+        border-color: #f44336;
+        background: rgba(244, 67, 54, 0.1);
+    }
+
+    .validation-summary-errors {
+        color: #f44336;
+        margin-bottom: 1rem;
+    }
+
+    .validation-summary-errors ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .profile-image-container {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .profile-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    @@media (max-width: 768px) {
+        .settings-container {
+            padding: 0 1rem;
+        }
+
+        .settings-card {
+            padding: 1.5rem;
+        }
+    }
+</style>
+
+<div class="settings-section">
+    <div class="settings-container">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success">
+                @TempData["SuccessMessage"]
+            </div>
+        }
+
+        <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+        <!-- Profile Information -->
+        <div class="settings-card">
+            <h2 class="settings-title">
+                <i class="fas fa-user-circle"></i>
+                Thông tin cá nhân
+            </h2>
+            <div class="profile-image-container">
+                @if (ViewBag.ProfileImage != null)
+                {
+                    <img src="data:image/jpeg;base64,@Convert.ToBase64String(ViewBag.ProfileImage)" alt="Ảnh đại diện" class="profile-image" />
+                }
+                else
+                {
+                    <img src="~/images/default-profile.png" alt="Ảnh đại diện mặc định" class="profile-image" />
+                }
+            </div>
+            <div class="info-group">
+                <div class="info-label">Email</div>
+                <div class="info-value">@Model.Email</div>
+            </div>
+            <div class="info-group">
+                <div class="info-label">Họ và tên</div>
+                <div class="info-value">@Model.FullName</div>
+            </div>
+            <div class="info-group">
+                <div class="info-label">Số điện thoại</div>
+                <div class="info-value">@Model.PhoneNumber</div>
+            </div>
+            <div class="info-group">
+                <div class="info-label">Ngày sinh</div>
+                <div class="info-value">@(Model.DateOfBirth?.ToString("dd/MM/yyyy") ?? "Chưa thiết lập")</div>
+            </div>
+            <a asp-controller="Account" asp-action="CompleteProfile" class="btn-link">
+                <i class="fas fa-edit"></i>
+                Cập nhật thông tin
+            </a>
+        </div>
+
+        <!-- Security Settings -->
+        <div class="settings-card">
+            <h2 class="settings-title">
+                <i class="fas fa-shield-alt"></i>
+                Cài đặt bảo mật
+            </h2>
+            <a asp-controller="Account" asp-action="ChangePassword" class="btn-link">
+                <i class="fas fa-key"></i>
+                Đổi mật khẩu
+            </a>
+            <a asp-controller="Account" asp-action="ChangeEmail" class="btn-link">
+                <i class="fas fa-key"></i>
+                Đổi email
+            </a>
+        </div>
+
+        <!-- Account Settings -->
+        <div class="settings-card">
+            <h2 class="settings-title">
+                <i class="fas fa-cog"></i>
+                Cài đặt tài khoản
+            </h2>
+            <a asp-controller="Account" asp-action="Manage" class="btn-link">
+                <i class="fas fa-user-cog"></i>
+                Quản lý tài khoản
+            </a>
+            <a asp-controller="Account" asp-action="Notifications" class="btn-link">
+                <i class="fas fa-bell"></i>
+                Cài đặt thông báo
+            </a>
+            <a asp-controller="Account" asp-action="Privacy" class="btn-link">
+                <i class="fas fa-lock"></i>
+                Cài đặt quyền riêng tư
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

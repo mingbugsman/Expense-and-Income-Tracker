@@ -1,59 +1,57 @@
-﻿    
-    @model Expense_Tracker_App.Models.Budget
-    @{
-        ViewData["PageTitle"] = Model.BudgetID == 0 ? "Create a new Budget" : "Edit Budget";
-        ViewData["PageActionText"] = "Back to List";
-        ViewData["PageActionUrl"] = "/Budgets";
-    }
-    <hr/>
-    <div class="row">
-        <div class="col-md-7">
-            <div class="widget p-5">
-                <form asp-action="CreateOrEdit">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <input type="hidden" name="BudgetId" asp-for="@Model.BudgetID"/>
-                    <div class="mb-3">
-                        <ejs-numerictextbox id="BudgetAmount" ejs-for="BudgetAmount"
-                                            placeholder="BudgetAmount" floatLabelType="Always"
-                                            min=0 format="n2" decimals="2"></ejs-numerictextbox>
-                        <span asp-validation-for="BudgetAmount" class="text-danger fs-6"></span>
-                    </div>
-                    <div class="mb-3">
-                        <ejs-datepicker id="startdate" ejs-for="Budget_StartDate"
-                                        placeholder="Date" floatLabelType="Always"
-                                        format="yyyy-MM-dd" value="@Model.Budget_StartDate"></ejs-datepicker>
-                        <span asp-validation-for="Budget_StartDate" class="text-danger"></span>
-                    </div>
-                    <div class="mb-3">
-                        <ejs-datepicker id="enddate" ejs-for="Budget_EndDate"
-                                        placeholder="Date" floatLabelType="Always"
-                                        format="yyyy-MM-dd" value="@Model.Budget_EndDate"></ejs-datepicker>
-                        <span asp-validation-for="Budget_EndDate" class="text-danger"></span>
-                    </div>
-                    <div class="mb-3">
-                        <ejs-dropdownlist id="ddlCategory" ejs-for="CategoryId"
-                                          dataSource="@ViewBag.Categories" placeholder="Category"
-                                          floatLabelType="Always" allowFiltering="true" ignoreAccent="true"
-                                          filterType="Contains" popupHeight="220px">
-                            <e-dropdownlist-fields value="CategoryId" text="Title"></e-dropdownlist-fields>
-                        </ejs-dropdownlist>
-                        <span asp-validation-for="CategoryId" class="text-danger fs-6"></span>
-                    </div>
-             
-
-                    <div class="mb-3">
-                        <ejs-button id="submit" content="Submit" type="Submit" cssClass="e-success"></ejs-button>
-                    </div>
-                </form>
-            </div>
-        </div>
-        <div class="col-md-5">
-            <div class="widget h-100 d-flex justify-content-center align-items-center"
-                 style="background-color:#212b36">
-                <i class="fa-solid fa-money-bill-transfer fa-2xl"></i>
-            </div>
+﻿@model Expense_Tracker_App.Models.Budget
+@{
+    ViewData["PageTitle"] = Model.BudgetID == 0 ? "Tạo ngân sách mới" : "Chỉnh sửa ngân sách";
+    ViewData["PageActionText"] = "Quay lại danh sách";
+    ViewData["PageActionUrl"] = "/Budgets";
+}
+<hr/>
+<div class="row">
+    <div class="col-md-7">
+        <div class="widget p-5">
+            <form asp-action="CreateOrEdit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" name="BudgetId" asp-for="@Model.BudgetID"/>
+                <div class="mb-3">
+                    <ejs-numerictextbox id="BudgetAmount" ejs-for="BudgetAmount"
+                                        placeholder="Số tiền ngân sách" floatLabelType="Always"
+                                        min=0 format="n2" decimals="2"></ejs-numerictextbox>
+                    <span asp-validation-for="BudgetAmount" class="text-danger fs-6"></span>
+                </div>
+                <div class="mb-3">
+                    <ejs-datepicker id="startdate" ejs-for="Budget_StartDate"
+                                    placeholder="Ngày bắt đầu" floatLabelType="Always"
+                                    format="yyyy-MM-dd" value="@Model.Budget_StartDate"></ejs-datepicker>
+                    <span asp-validation-for="Budget_StartDate" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <ejs-datepicker id="enddate" ejs-for="Budget_EndDate"
+                                    placeholder="Ngày kết thúc" floatLabelType="Always"
+                                    format="yyyy-MM-dd" value="@Model.Budget_EndDate"></ejs-datepicker>
+                    <span asp-validation-for="Budget_EndDate" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <ejs-dropdownlist id="ddlCategory" ejs-for="CategoryId"
+                                      dataSource="@ViewBag.Categories" placeholder="Danh mục"
+                                      floatLabelType="Always" allowFiltering="true" ignoreAccent="true"
+                                      filterType="Contains" popupHeight="220px">
+                        <e-dropdownlist-fields value="CategoryId" text="Title"></e-dropdownlist-fields>
+                    </ejs-dropdownlist>
+                    <span asp-validation-for="CategoryId" class="text-danger fs-6"></span>
+                </div>
+         
+                <div class="mb-3">
+                    <ejs-button id="submit" content="Lưu" type="Submit" cssClass="e-success"></ejs-button>
+                </div>
+            </form>
         </div>
     </div>
-    @section Scripts {
-        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    }
+    <div class="col-md-5">
+        <div class="widget h-100 d-flex justify-content-center align-items-center"
+             style="background-color:#212b36">
+            <i class="fa-solid fa-money-bill-transfer fa-2xl"></i>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

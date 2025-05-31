@@ -12,5 +12,6 @@ namespace Expense_Tracker_App.Service
         Task UpdateCategoryAsync(Category category);
         Task<bool> DeleteCategoryAsync(int id, string userId);
         Task<bool> CategoryExistsAsync(int id);
+        Task<List<Category>> SearchCategoriesAsync(string userId, string? searchTerm, string? type);
     }
 }

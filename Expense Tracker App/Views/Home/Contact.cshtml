@@ -1,0 +1,195 @@
+@{
+    ViewData["Title"] = "Liên hệ";
+}
+
+<style>
+    .contact-section {
+        padding: 4rem 0;
+        background: linear-gradient(135deg, #1a1f25 0%, #17181f 100%);
+        min-height: calc(100vh - 200px);
+    }
+
+    .contact-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+
+    .contact-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+        align-items: start;
+    }
+
+    .contact-info {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 2rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .contact-info h2 {
+        color: #fff;
+        font-size: 1.75rem;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(135deg, #4dabf7 0%, #3b82f6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .contact-info p {
+        color: rgba(255, 255, 255, 0.7);
+        line-height: 1.6;
+        margin-bottom: 2rem;
+    }
+
+    .contact-methods {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .contact-method {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .contact-method i {
+        font-size: 1.25rem;
+        color: #4dabf7;
+    }
+
+    .contact-form {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 2rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        color: rgba(255, 255, 255, 0.9);
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .form-control {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        color: #fff;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #4dabf7;
+        box-shadow: 0 0 0 2px rgba(77, 171, 247, 0.2);
+    }
+
+    textarea.form-control {
+        min-height: 150px;
+        resize: vertical;
+    }
+
+    .submit-btn {
+        background: linear-gradient(135deg, #4dabf7 0%, #3b82f6 100%);
+        color: white;
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 10px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(77, 171, 247, 0.3);
+    }
+
+    @@media (max-width: 768px) {
+        .contact-grid {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        .contact-container {
+            padding: 0 1rem;
+        }
+    }
+</style>
+
+<div class="contact-section">
+    <div class="contact-container">
+        <div class="contact-grid">
+            <div class="contact-info">
+                <h2>Liên hệ với chúng tôi</h2>
+                <p>Bạn có thắc mắc về ứng dụng theo dõi chi tiêu của chúng tôi? Chúng tôi luôn sẵn sàng hỗ trợ! Hãy liên hệ với chúng tôi qua các phương thức sau hoặc điền vào biểu mẫu liên hệ.</p>
+                
+                <div class="contact-methods">
+                    <div class="contact-method">
+                        <i class="fas fa-envelope"></i>
+                        <span>support@expensetracker.com</span>
+                    </div>
+                    <div class="contact-method">
+                        <i class="fas fa-phone"></i>
+                        <span>+1 (555) 123-4567</span>
+                    </div>
+                    <div class="contact-method">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>123 Finance Street, Business District, 10001</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-form">
+                <form id="contactForm" method="post">
+                    <div class="form-group">
+                        <label class="form-label" for="name">Họ và tên</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="email">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="subject">Tiêu đề</label>
+                        <input type="text" class="form-control" id="subject" name="subject" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="message">Nội dung</label>
+                        <textarea class="form-control" id="message" name="message" required></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Gửi tin nhắn</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Here you would typically handle the form submission
+            // For now, we'll just show an alert
+            alert('Cảm ơn tin nhắn của bạn! Chúng tôi sẽ liên hệ lại sớm.');
+            this.reset();
+        });
+    </script>
+} 

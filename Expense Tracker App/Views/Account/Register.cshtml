@@ -1,116 +1,233 @@
-﻿
-
-@model Expense_Tracker_App.Models.AccountViewModels.RegisterViewModel
+﻿@model Expense_Tracker_App.Models.AccountViewModels.RegisterViewModel
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = "Đăng ký";
 }
-<div class="row">
-    <div class="col-md-7">
-        <div class="p-5" style="background-color:#212b36">
-            <form asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
-                <h4>Register an account</h4>
 
+<style>
+    /* Navbar styles */
+    .login-container {
+        min-height: 100vh;
+        margin-top: 2.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #1a1f25 0%, #17181f 100%);
+    }
 
-                <div class="mb-3">
-                    @*syncfunction*@
-                    <label>Email</label>
-                    <ejs-textbox id="email" ejs-for="Email"
-                                 placeholder="Email..." ></ejs-textbox>
-                    <span asp-validation-for="Email" class="text-danger fs-6"></span>
+    .login-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 3rem;
+        width: 100%;
+        max-width: 450px;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        transition: transform 0.3s ease;
+    }
 
-                </div>
-                <div class="mb-3">
-                    @*Password*@
-                    @*Syncfunction*@
-                    <label>Password</label>
-                    <ejs-textbox type="password" ejs-for="Password" id="password"
-                                 placeholder="Password..."></ejs-textbox>
-                 
-                    <ul class="mt-2" id="password-requirements">
-                        <li id="length" class="default">Độ dài tối thiểu 6 kí tự.</li>
-                        <li id="uppercase" class="default">Có ít nhất một chữ cái viết hoa.</li>
-                        <li id="lowercase" class="default">Có ít nhất một chữ cái viết thường.</li>
-                        <li id="number" class="default">Có ít nhất một chữ số.</li>
-                        <li id="special" class="default">Có ít nhất một ký tự đặc biệt.</li>
-                    </ul>
-                </div>
-                <div class="mb-3">
-                    @*Password*@
-                    @*Syncfunction*@
-                    <label>Confirmed password</label>
-                    <ejs-textbox type="password" ejs-for="ConfirmPassword" id="ConfirmPassword"
-                                 placeholder="Confirm Password..."></ejs-textbox>
-                    <span asp-validation-for="ConfirmPassword" style="color:red;font-size:14px"></span>
-                </div>
-                <div class="mb-3">
-                    <a href="/Account/Login">Already have an account?</a>
-                </div>
+        .login-card:hover {
+            transform: translateY(-5px);
+        }
 
-               
-                <div class="mb-3">
-                    <ejs-button id="submit" content="Submit" type="Submit" cssClass="e-success"></ejs-button>
-                </div>
-            </form>
+    .login-title {
+        color: #ffffff;
+        font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    /* Form Fields */
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        color: #e9ecef;
+        font-size: 0.9rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .e-input-group {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 10px !important;
+        overflow: hidden;
+    }
+
+    .e-input {
+        color: #ffffff !important;
+        padding: 1rem !important;
+        font-size: 1rem !important;
+        background: transparent !important;
+    }
+
+    .e-input::placeholder {
+        color: rgba(255, 255, 255, 0.5) !important;
+    }
+
+    .validation-error {
+        color: #ff6b6b;
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+    }
+
+    .validation-summary {
+        display: none;
+        color: #ff6b6b;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+        padding: 0.5rem;
+        border-radius: 5px;
+        background: rgba(255, 107, 107, 0.1);
+    }
+
+    /* Password Requirements */
+    #password-requirements {
+        list-style: none;
+        padding: 0.75rem;
+        margin: 0.5rem 0;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        font-size: 0.85rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    #password-requirements li {
+        color: rgba(255, 255, 255, 0.7);
+        padding: 0.25rem 0;
+    }
+
+    #password-requirements li::before {
+        content: "•";
+        margin-right: 0.5rem;
+        color: rgba(255, 255, 255, 0.4);
+    }
+
+    .links-container {
+        margin: 1rem 0;
+    }
+
+    .auth-link {
+        color: #4dabf7;
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: color 0.3s ease;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        background: rgba(77, 171, 247, 0.1);
+    }
+
+    .auth-link:hover {
+        color: #3b82f6;
+        background: rgba(77, 171, 247, 0.2);
+        text-decoration: none;
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 1rem !important;
+        border-radius: 10px !important;
+        font-size: 1rem !important;
+        font-weight: 600 !important;
+        background: linear-gradient(135deg, #4dabf7 0%, #3b82f6 100%) !important;
+        border: none !important;
+        color: white !important;
+        margin-top: 1rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+    }
+
+    .verification-message {
+        background: rgba(77, 171, 247, 0.1);
+        border: 1px solid rgba(77, 171, 247, 0.2);
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        color: #e9ecef;
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    .verification-message i {
+        color: #4dabf7;
+        margin-right: 0.5rem;
+    }
+
+</style>
+<!-- Registration Form -->
+<div class="login-container">
+    <div class="login-card">
+        <h1 class="login-title">Đăng ký tài khoản</h1>
+        <div class="verification-message">
+            <i class="fas fa-info-circle"></i>
+            Sau khi đăng ký, bạn sẽ nhận được link xác thực. 
+            Hãy kiểm tra trong hộp thư email của bạn, ấn vào link và xác thực.
         </div>
+        <form asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <ejs-textbox id="email" 
+                            ejs-for="Email"
+                            placeholder="Nhập email..."
+                            cssClass="modern-input">
+                </ejs-textbox>
+                <span asp-validation-for="Email" class="validation-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <ejs-textbox type="password" 
+                            ejs-for="Password" 
+                            id="password"
+                            placeholder="Nhập password mạnh..."
+                            cssClass="modern-input">
+                </ejs-textbox>
+                <ul id="password-requirements">
+                    <li>Độ dài ít nhất 6 kí tự</li>
+                    <li>Ít nhất một chữ viết hoa</li>
+                    <li>Ít nhất một chữ viết thường</li>
+                    <li>Ít nhất một số</li>
+                    <li>Ít nhất một ký tự đặc biệt (!,$,%,...)</li>
+                </ul>
+                <span asp-validation-for="Password" class="validation-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Xác nhận mật khẩu</label>
+                <ejs-textbox type="password" 
+                            ejs-for="ConfirmPassword" 
+                            id="ConfirmPassword"
+                            placeholder="Xác nhận mật khẩu"
+                            cssClass="modern-input">
+                </ejs-textbox>
+                <span asp-validation-for="ConfirmPassword" class="validation-error"></span>
+            </div>
+
+            <div asp-validation-summary="All" class="validation-summary"></div>
+
+            <div class="links-container">
+                <a href="/Account/Login" class="auth-link">Đã có tài khoản?</a>
+            </div>
+
+            <ejs-button id="submit" 
+                       content="Create Account" 
+                       cssClass="submit-btn" 
+                       type="submit">
+            </ejs-button>
+        </form>
     </div>
 </div>
 
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+       <script src="~/js/resetPassword.js"></script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const passwordInput = document.getElementById('password');
-        const confirmPasswordInput = document.getElementById('ConfirmPassword'); // Sửa đúng ID
-        const matchMessage = document.getElementById('password-match');
-        const submitButton = document.getElementById('submit');
-
-        const requirements = {
-            length: document.getElementById('length'),
-            uppercase: document.getElementById('uppercase'),
-            lowercase: document.getElementById('lowercase'),
-            number: document.getElementById('number'),
-            special: document.getElementById('special'),
-        };
-
-        function checkRequirement(element, isValid) {
-            if (isValid) {
-                element.classList.remove('invalid');
-                element.classList.add('valid');
-            } else {
-                element.classList.remove('valid');
-                element.classList.add('invalid');
-            }
-        }
-
-        function validatePasswordStrength() {
-            const value = passwordInput.value;
-            checkRequirement(requirements.length, value.length >= 6);
-            checkRequirement(requirements.uppercase, /[A-Z]/.test(value));
-            checkRequirement(requirements.lowercase, /[a-z]/.test(value));
-            checkRequirement(requirements.number, /[0-9]/.test(value));
-            checkRequirement(requirements.special, /[\W_]/.test(value));
-        }
-
-        function validatePasswordMatch() {
-            const isMatch = confirmPasswordInput.value === passwordInput.value && confirmPasswordInput.value.length > 0;
-            matchMessage.style.display = isMatch ? "none" : "block";
-        }
-
-        function checkFormValidity() {
-            const allValid = Object.values(requirements).every(req => req.classList.contains('valid'));
-            const isMatch = confirmPasswordInput.value === passwordInput.value && confirmPasswordInput.value.length > 0;
-            submitButton.disabled = !(allValid && isMatch);
-        }
-
-        passwordInput.addEventListener('input', function () {
-            validatePasswordStrength();
-            validatePasswordMatch();
-            checkFormValidity();
-        });
-
-        confirmPasswordInput.addEventListener('input', function () {
-            validatePasswordMatch();
-            checkFormValidity();
-        });
-    });
-</script>
-
+}

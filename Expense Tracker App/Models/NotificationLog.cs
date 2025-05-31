@@ -14,6 +14,8 @@ namespace Expense_Tracker_App.Models
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+        public bool IsRead { get; set; } = false;
+
         public string? UserId;
         [ForeignKey("UserId")]
         public ApplicationUser? User { get; set; }

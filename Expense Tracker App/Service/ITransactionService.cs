@@ -10,7 +10,6 @@ namespace Expense_Tracker_App.Service
         Task<bool> CreateOrUpdateTransactionAsync(Transaction transaction, string userId);
         Task<bool> DeleteTransactionAsync(int id, string userId);
         Task<List<Category>> GetUserCategoriesAsync(string userId);
-        
-
+        Task<List<Transaction>> SearchTransactionsAsync(string userId, string? searchTerm, int? categoryId, DateTime? startDate, DateTime? endDate, decimal? minAmount, decimal? maxAmount);
     }
 }

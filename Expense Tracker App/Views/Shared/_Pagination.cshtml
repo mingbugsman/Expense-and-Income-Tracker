@@ -1,0 +1,76 @@
+@model X.PagedList.IPagedList<dynamic>
+@using X.PagedList.Mvc.Core
+
+@{
+    var routeValues = new RouteValueDictionary();
+    foreach (var key in ViewData.Keys)
+    {
+        if (key != "Title" && key != "PageTitle" && key != "PageActionText" && key != "PageActionUrl" && key != "isDashBoard")
+        {
+            routeValues[key] = ViewData[key];
+        }
+    }
+}
+
+<div class="pagination-container">
+    <div class="pagination-info">
+        Hiển thị @(((Model.PageNumber - 1) * Model.PageSize) + 1) đến @(Math.Min(Model.PageNumber * Model.PageSize, Model.TotalItemCount)) trong tổng số @Model.TotalItemCount mục
+    </div>
+    <div class="d-flex flex-column">
+        <div class="page-size-selector">
+            <label for="pageSize">Số mục trên trang:</label>
+            <select id="pageSize" onchange="changePageSize(this.value)">
+                @{
+                    var pageSizes = new[] { 5, 10, 20, 50 };
+                    @foreach (var size in pageSizes)
+                    {
+                        if (Model.PageSize == size)
+                        {
+                            <option value="@size" selected="selected">@size</option>
+                        }
+                        else
+                        {
+                            <option value="@size">@size</option>
+                        }
+                    }
+                }
+            </select>
+        </div>
+        @{
+            var pagedListRouteValues = new RouteValueDictionary(routeValues);
+            pagedListRouteValues["pageSize"] = Model.PageSize;
+        }
+        @Html.PagedListPager(Model, page =>
+        {
+            var route = new RouteValueDictionary(routeValues);
+            route["page"] = page;
+            route["pageSize"] = Model.PageSize;
+            return Url.Action(ViewContext.RouteData.Values["action"].ToString(), route);
+        }, new PagedListRenderOptions
+        {
+            DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+            DisplayLinkToLastPage = PagedListDisplayMode.Always,
+            DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+            DisplayLinkToNextPage = PagedListDisplayMode.Always,
+            MaximumPageNumbersToDisplay = 5,
+            DisplayEllipsesWhenNotShowingAllPageNumbers = true,
+            EllipsesFormat = "&#8230;",
+            LinkToFirstPageFormat = "«",
+            LinkToPreviousPageFormat = "‹",
+            LinkToNextPageFormat = "›",
+            LinkToLastPageFormat = "»",
+            UlElementClasses = new[] { "pagination" },
+            LiElementClasses = new[] { "page-item" },
+            PageClasses = new[] { "page-link" }
+        })
+    </div>
+</div>
+
+<script>
+    function changePageSize(pageSize) {
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set('pageSize', pageSize);
+        currentUrl.searchParams.set('page', '1'); // Reset to first page when changing page size
+        window.location.href = currentUrl.toString();
+    }
+</script> 

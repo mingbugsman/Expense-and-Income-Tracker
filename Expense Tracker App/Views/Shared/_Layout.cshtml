@@ -1,130 +1,594 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using Syncfusion.EJ2.Navigations
 @inject UserManager<ApplicationUser> UserManager
 @{
     var currentUser = await UserManager.GetUserAsync(User);
-    
 }
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Expense_Tracker_App</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css" integrity="sha512-10/jx2EXwxxWqCLX/hHth/vu2KY3jCF70dCQB8TSgNjbCVAC/8vai53GfMDrO2Emgwccf2pJqxct9ehpzG+MTw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <!-- Syncfusion ASP.NET Core controls styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css" />
     <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/28.1.33/material.css" />
     <link href="https://cdn.syncfusion.com/ej2/28.1.33/bootstrap5-dark.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <!-- Syncfusion ASP.NET Core controls scripts -->
-    <script src="https://cdn.syncfusion.com/ej2/28.1.33/dist/ej2.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #4dabf7 0%, #3b82f6 100%);
+            --surface-color: #1a1f25;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --font-size-base: clamp(14px, 1vw, 16px);
+            --font-size-lg: clamp(16px, 1.2vw, 18px);
+            --font-size-xl: clamp(18px, 1.5vw, 24px);
+            --font-size-2xl: clamp(24px, 2vw, 32px);
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1f25 0%, #17181f 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            font-size: var(--font-size-base);
+            line-height: 1.5;
+        }
+
+        .navbar {
+            background: rgba(26, 31, 37, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.75rem 1rem;
+            position: sticky;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .container-nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .nav-icons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-left: auto;
+        }
+
+        .nav-icon {
+            position: relative;
+            color: var(--text-secondary);
+            font-size: var(--font-size-lg);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            padding: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-icon:hover {
+            color: var(--text-primary);
+            transform: translateY(-2px);
+        }
+
+        .profile {
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            margin-left: 0.5rem;
+            position: relative;
+        }
+
+        .profile:hover {
+            transform: scale(1.05);
+        }
+
+        .profile-pic {
+            width: clamp(32px, 4vw, 40px);
+            height: clamp(32px, 4vw, 40px);
+            border-radius: 50%;
+            border: 2px solid #4dabf7;
+            object-fit: cover;
+            box-shadow: 0 0 20px rgba(77, 171, 247, 0.2);
+        }
+
+        .menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: rgba(26, 31, 37, 0.98);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1.25rem;
+            width: min(280px, 90vw);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            visibility: hidden;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            margin-top: 0.5rem;
+        }
+
+        .menu.active {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .menu h2 {
+            font-size: var(--font-size-lg);
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+            word-break: break-word;
+        }
+
+        .menu span {
+            color: var(--text-secondary);
+            font-size: var(--font-size-base);
+            display: block;
+            word-break: break-all;
+        }
+
+        .menu ul {
+            margin-top: 1.25rem;
+            padding: 0;
+            list-style: none;
+        }
+
+        .menu ul li {
+            padding: 0.75rem 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .menu ul li:first-child {
+            border-top: none;
+        }
+
+        .menu ul li a, 
+        .menu ul li button {
+            color: var(--text-secondary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: var(--font-size-base);
+            transition: color 0.3s ease;
+            width: 100%;
+            text-align: left;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        .menu ul li:hover a,
+        .menu ul li:hover button {
+            color: #4dabf7;
+        }
+
+        .menu ul li img {
+            width: clamp(16px, 2vw, 20px);
+            height: clamp(16px, 2vw, 20px);
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+
+        .main-content {
+            padding: clamp(1rem, 3vw, 2rem);
+            max-width: 1400px;
+            margin: 0 auto;
+            margin-top: 60px;
+        }
+
+        .page-header {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: clamp(1rem, 3vw, 2rem);
+            margin-bottom: clamp(1rem, 3vw, 2rem);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .page-title {
+            font-size: var(--font-size-2xl);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            word-break: break-word;
+        }
+
+        .breadcrumb {
+            margin-top: 1rem;
+        }
+
+        .action-button {
+            background: var(--primary-gradient);
+            border: none;
+            padding: clamp(0.5rem, 1.5vw, 0.75rem) clamp(1rem, 2vw, 1.5rem);
+            border-radius: 10px;
+            color: white;
+            font-weight: 500;
+            font-size: var(--font-size-base);
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(77, 171, 247, 0.3);
+        }
+
+        /* Animations */
+        @@keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        /* Responsive Design */
+        @@media (max-width: 768px) {
+            .navbar {
+                padding: 0.5rem;
+            }
+
+            .container-nav {
+                padding: 0 0.5rem;
+            }
+
+            .nav-icons {
+                gap: 0.5rem;
+            }
+
+            .nav-icon {
+                padding: 0.25rem;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .page-header {
+                padding: 1rem;
+            }
+
+            .menu {
+                right: -0.5rem;
+            }
+        }
+
+        @@media (max-width: 480px) {
+            .nav-icon {
+                font-size: var(--font-size-base);
+            }
+
+            .profile-pic {
+                width: 32px;
+                height: 32px;
+            }
+
+            .menu {
+                right: -0.5rem;
+            }
+
+            .menu h2 {
+                font-size: var(--font-size-base);
+            }
+
+            .menu span {
+                font-size: calc(var(--font-size-base) * 0.9);
+            }
+        }
+
+        .footer {
+            background: rgba(26, 31, 37, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 3rem 0;
+            margin-top: 3rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .footer-section {
+            margin-bottom: 2rem;
+        }
+
+        .footer-title {
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .footer-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 30px;
+            height: 2px;
+            background: linear-gradient(135deg, #4dabf7 0%, #3b82f6 100%);
+            border-radius: 2px;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .footer-links a:hover {
+            color: #4dabf7;
+            transform: translateX(5px);
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-icon:hover {
+            background: linear-gradient(135deg, #4dabf7 0%, #3b82f6 100%);
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 2rem;
+            margin-top: 2rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        @@media (max-width: 768px) {
+            .footer {
+                padding: 2rem 0;
+            }
+
+            .footer-section {
+                text-align: center;
+            }
+
+            .footer-title::after {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            .footer-social {
+                justify-content: center;
+            }
+        }
+
+        /* Pagination Styles */
+        .pagination-container {
+            margin: 2rem 0;
+        }
+        
+        .pagination {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        
+        .pagination .page-item {
+            margin: 0;
+        }
+        
+        .pagination .page-link {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            border: 1px solid #2d3748;
+            background-color: #1a202c;
+            color: #e2e8f0;
+            transition: all 0.2s;
+        }
+        
+        .pagination .page-link:hover {
+            background-color: #2d3748;
+            border-color: #4a5568;
+        }
+        
+        .pagination .active .page-link {
+            background-color: #4299e1;
+            border-color: #4299e1;
+            color: white;
+        }
+        
+        .pagination .disabled .page-link {
+            background-color: #1a202c;
+            border-color: #2d3748;
+            color: #4a5568;
+            cursor: not-allowed;
+        }
+        
+        .page-size-selector {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .page-size-selector select {
+            background-color: #1a202c;
+            border: 1px solid #2d3748;
+            color: #e2e8f0;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+        }
+        
+        .pagination-info {
+            color: #e2e8f0;
+            margin-right: 1rem;
+        }
+
+        /* Scroll to Top Button */
+        .scroll-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 45px;
+            height: 45px;
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            transition: all 0.3s ease;
+            z-index: 9999;
+            pointer-events: auto;
+            position: fixed !important;
+            bottom: 30px !important;
+            right: 30px !important;
+        }
+
+        .scroll-to-top:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(135deg, #3b82f6 0%, #4dabf7 100%);
+        }
+
+        .scroll-to-top:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        @@media (max-width: 768px) {
+            .scroll-to-top {
+                bottom: 20px !important;
+                right: 20px !important;
+                width: 40px;
+                height: 40px;
+                font-size: 1.1rem;
+            }
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #ff4444;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 12px;
+            font-weight: bold;
+            min-width: 18px;
+            text-align: center;
+        }
+    </style>
 </head>
 
 <body class="e-bigger">
-    @if (User.Identity.IsAuthenticated){
-
-       
+    @if (User.Identity.IsAuthenticated)
+    {
         <partial name="_SideBar" />
-        <div class="dock-target">
-
-            <nav class="navbar sticky-top">
-                <div class="container-fluid container-nav py-2 px-4 " style="display:flex; justify-content:end">
-                    <div class="d-flex justify-content-center">
-                        <div><i class="fa-solid fa-bell"></i></div>
-                        <div><a href="/Notification/Index"><i class="fa-solid fa-message"></i></a></div>
-                        <div class="profile" onclick="menuToggle();">
-                            <img class="profile-pic" src="@(currentUser != null && currentUser.ProfileImg != null && currentUser.ProfileImg.Length > 0
-                            ? $"data:image/jpeg;base64,{Convert.ToBase64String(currentUser.ProfileImg)}"
-                            : Url.Content("~/images/default.jpg"))"
-                                 alt="Profile Image"
-                                 />
+            <div class="main-content fade-in">
+                @if (ViewData["isDashBoard"] == null)
+                {
+                    <div class="page-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h1 class="page-title">@ViewData["PageTitle"]</h1>
+                            @if (ViewData["PageActionText"] != null)
+                            {
+                                <a class="action-button" href="@ViewData["PageActionUrl"]">
+                                    @ViewData["PageActionText"]
+                                </a>
+                            }
                         </div>
-                        <div class="menu">
-                            <h2>@currentUser?.FullName</h2>
-                            <span>@currentUser?.Email</span>
-                            <ul>
-                                <li>
-                                    <img src="~/images/user.png" /><a href="/Account/Profile">My profile</a>
-                                </li>
-                                <li>
-                                    <img src="~/images/edit.png" /> <a href="/Account/CompleteProfile">Edit Profile</a>
-                                </li>
-                                <li>
-                                    <img src="~/images/question.png"><a href="#">Help</a>
-                                </li>
-                                <li>     
-                                    <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" id="logoutForm" style="display: inline;">
-                                        <img src="~/images/log-out.png" alt="logout"/>
-                                        <button type="submit" class="btn">Log out
-                                        </button>
-                                    </form>
-
-                                </li>
-                            </ul>
-                        </div>
+                        <ejs-breadcrumb id="breadcrumb"
+                                      separatorTemplate="@Html.Raw("<span class='fa-solid fa-angle-right'></span>")"
+                                      items="@(new List<Syncfusion.EJ2.Navigations.BreadcrumbItem> {
+                                          new BreadcrumbItem { Text = "Home", Url = "/" },
+                                          new BreadcrumbItem { Text = ViewData["PageTitle"]?.ToString() ?? "Page", Url = Context.Request.Path }
+                                      })">
+                        </ejs-breadcrumb>
                     </div>
-                </div>
-            </nav>
-            <div class="main-content">
-                <div class="container mt-5">
-                    <div class="row justify-content-center">
-                        <div class="col-md-10">
-                            <main role="main" class="pb-3">
-                                @if (ViewData["isDashBoard"] == null)
-                                {
-                                    <div class="row">
-                                        <div class="col-md-7">
-                                            <div class="d-flex flex-column mb-5">
-                                                <div class="d-flex mb-1">
-                                                    <div class="flex-grow-1">
-                                                        <h3 class="fw-bold">@ViewData["PageTitle"]</h3>
-                                                    </div>
-                                                    <div>
-                                                        @if (ViewData["PageActionText"] != null)
-                                                        {
-                                                            <a class="btn btn-success" href="@ViewData["PageActionUrl"]"> @ViewData["PageActionText"]</a>
-                                                        }
-                                                    </div>
-                                                </div>
-                                                <ejs-breadcrumb id="breadcrumb"
-                                                                separatorTemplate="@Html.Raw("<span class='fa-solid fa-angle-right'></span>")"></ejs-breadcrumb>
-                                            </div>
-                                        </div>
-                                    </div>
-                                }
-
-                                @RenderBody()
-                            </main>
-                        </div>
-                    </div>
-                </div>
+                }
+                @RenderBody()
             </div>
-        </div>
-    } else {
-        <div class="main-content">
-            <div class="container mt-5">
-                <div class="row justify-content-center">
-                    <div class="col-md-10">
-                        <main role="main" class="pb-3">
-                            <partial name="_LoginPartial" />
-                            @RenderBody()
-                        </main>
-                    </div>
-                </div>
-
-            </div>
+    }
+    else
+    {
+        <div class="main-content fade-in">
+            <partial name="_LoginPartial" />
+            @RenderBody()
         </div>
     }
-   
-           
-           
 
+    <button class="scroll-to-top" id="scrollToTop" title="Scroll to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.syncfusion.com/ej2/28.1.33/dist/ej2.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
     <ejs-scripts></ejs-scripts>
@@ -134,6 +598,117 @@
             const toggleMenu = document.querySelector(".menu");
             toggleMenu.classList.toggle("active");
         }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const menu = document.querySelector(".menu");
+            const profile = document.querySelector(".profile");
+            if (!menu.contains(e.target) && !profile.contains(e.target)) {
+                menu.classList.remove("active");
+            }
+        });
+
+        // Add smooth transitions for page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.classList.add('fade-in');
+        });
+
+        // Scroll to Top functionality
+        const scrollToTopBtn = document.getElementById('scrollToTop');
+
+        scrollToTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="footer-section">
+                        <h3 class="footer-title">Quản lý chi tiêu</h3>
+                        <p>
+                            Người bạn đồng hành tài chính cá nhân của bạn để theo dõi chi tiêu, quản lý ngân sách và đạt được mục tiêu tài chính.
+                        </p>
+                        <div class="footer-social">
+                            <a href="#" class="social-icon">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="social-icon">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="social-icon">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                            <a href="#" class="social-icon">
+                                <i class="fab fa-github"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="footer-section">
+                        <h3 class="footer-title">Liên kết nhanh</h3>
+                        <ul class="footer-links">
+                            <li><a asp-controller="Home" asp-action="About">Về chúng tôi</a></li>
+                            <li><a asp-controller="Home" asp-action="Privacy">Chính sách bảo mật</a></li>
+                            <li><a asp-controller="Home" asp-action="Terms">Điều khoản sử dụng</a></li>
+                            <li><a asp-controller="Home" asp-action="Contact">Liên hệ</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="footer-section">
+                        <h3 class="footer-title">Tính năng</h3>
+                        <ul class="footer-links">
+                            <li><a href="/">Theo dõi chi tiêu</a></li>
+                            <li><a asp-controller="Budgets" asp-action="Index">Quản lý ngân sách</a></li>
+                            <li><a asp-controller="RecurringTransactions" asp-action="Index">Giao dịch định kỳ</a></li>
+                            <li><a href="#">Báo cáo tài chính</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; @DateTime.Now.Year - Quản lý chi tiêu. Bảo lưu mọi quyền.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        async function fetchUnreadCount() {
+            try {
+                const response = await fetch('/Notification/GetUnreadCount');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                const badge = document.getElementById('notification-badge');
+                
+                if (badge) {
+                    if (data.count > 0) {
+                        badge.style.display = 'inline-block';
+                        badge.textContent = data.count;
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                }
+            } catch (err) {
+                console.error('Lỗi khi lấy thông báo chưa đọc:', err);
+            }
+        }
+
+        // Lấy ngay khi load
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchUnreadCount();
+        });
+
+        // Kiểm tra mỗi 15 giây
+        setInterval(fetchUnreadCount, 15000);
     </script>
 </body>
 </html>

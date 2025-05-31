@@ -1,0 +1,116 @@
+@{
+    Layout = "_AdminLayout";
+}
+
+<div class="row">
+    <div class="col-md-3 mb-4">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <h5 class="card-title">Tổng số người dùng</h5>
+                <h2 class="card-text">@ViewBag.TotalUsers</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <h5 class="card-title">Tổng số giao dịch</h5>
+                <h2 class="card-text">@ViewBag.TotalTransactions</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <h5 class="card-title">Tổng số danh mục</h5>
+                <h2 class="card-text">@ViewBag.TotalCategories</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <h5 class="card-title">Tổng số ngân sách</h5>
+                <h2 class="card-text">@ViewBag.TotalBudgets</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Người dùng gần đây</h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    @foreach (var user in ViewBag.RecentUsers)
+                    {
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">@user.UserName</h6>
+                                <small>@user.Email</small>
+                            </div>
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Giao dịch gần đây</h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    @foreach (var transaction in ViewBag.RecentTransactions)
+                    {
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">@transaction.Note</h6>
+                                <small>@transaction.Amount.ToString("C")</small>
+                            </div>
+                            <small>@transaction.Category?.Title - @transaction.User?.UserName</small>
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Thao tác nhanh</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <a asp-action="Users" class="btn btn-primary w-100">
+                            <i class="bi bi-people me-2"></i>Quản lý người dùng
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a asp-action="Categories" class="btn btn-success w-100">
+                            <i class="bi bi-tags me-2"></i>Quản lý danh mục
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a asp-action="Transactions" class="btn btn-info w-100">
+                            <i class="bi bi-cash-stack me-2"></i>Xem giao dịch
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a asp-action="Reports" class="btn btn-warning w-100">
+                            <i class="bi bi-graph-up me-2"></i>Xem báo cáo
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

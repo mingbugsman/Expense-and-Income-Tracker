@@ -1,50 +1,97 @@
-﻿@model IEnumerable<Expense_Tracker_App.Models.RecurringTransaction>
+﻿@model X.PagedList.IPagedList<Expense_Tracker_App.Models.RecurringTransaction>
+@using X.PagedList
 
 @{
-    ViewData["PageTitle"] = "Recurring Transaction";
-    ViewData["PageActionText"] = "+ New Recurring Transaction";
-    ViewData["PageActionUrl"] = "/recurringtransactions/CreateOrEdit";
+    ViewData["PageTitle"] = "Giao dịch định kỳ";
+    ViewData["PageActionText"] = "+ Thêm giao dịch định kỳ";
+    ViewData["PageActionUrl"] = "/RecurringTransactions/CreateOrEdit";
 }
-<div class="row">
-    <div class="col-md-7">
-        <ejs-grid id="transactions" dataSource="@Model" gridLines="None"
-                  allowSorting="true" allowPaging="true">
-            <e-grid-pagesettings pageSize="10"></e-grid-pagesettings>
-            <e-grid-columns>
-                <e-grid-column headerText="Category" field="Category.Title"></e-grid-column>
-                <e-grid-column headerText="Frequency" field="Frequency"></e-grid-column>
-                <e-grid-column headerText="Start Date" field="StartDate" width="110px"
-                               type="date" format="MMM-dd-yy" textAlign="Left"></e-grid-column>
-                <e-grid-column headerText="End Date" field="EndDate" width="110px"
-                               type="date" format="MMM-dd-yy" textAlign="Left"></e-grid-column>
-                <e-grid-column headerText="Amount" field="FormattedAmount" textAlign="Right" width="110px"></e-grid-column>
-                <e-grid-column headerText="Actions" template="#actionColumnTemplate" width="100px"></e-grid-column>
-            </e-grid-columns>
 
-        </ejs-grid>
-    </div>
-    <div class="col-md-5">
-        <div class="widget h-100 d-flex justify-content-center align-items-center">
-            <i class="fa-solid fa-shapes fa-2"></i>
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <div class="widget p-4" style="background-color:#212b36">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="mb-0">Giao dịch định kỳ</h4>
+                <div>
+                    <a href="/Home/HelpCenter" class="btn btn-info">
+                        <i class="fa-solid fa-question-circle me-2"></i>Trợ giúp
+                    </a>
+                </div>
+            </div>
+            <form asp-action="Index" method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Tìm kiếm</label>
+                    <input type="text" name="searchTerm" class="form-control" value="@ViewBag.SearchTerm" placeholder="Tìm trong ghi chú...">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Danh mục</label>
+                    <select name="categoryId" class="form-select">
+                        <option value="">Tất cả danh mục</option>
+                        @foreach (var category in ViewBag.Categories)
+                        {
+                            <option value="@category.CategoryId" selected="@(ViewBag.CategoryId == category.CategoryId)">
+                                @category.Title
+                            </option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Tần suất</label>
+                    <select name="frequency" class="form-select">
+                        <option value="">Tất cả tần suất</option>
+                        <option value="Daily" selected="@(ViewBag.Frequency == "Daily")">Hàng ngày</option>
+                        <option value="Weekly" selected="@(ViewBag.Frequency == "Weekly")">Hàng tuần</option>
+                        <option value="Monthly" selected="@(ViewBag.Frequency == "Monthly")">Hàng tháng</option>
+                        <option value="Yearly" selected="@(ViewBag.Frequency == "Yearly")">Hàng năm</option>
+                    </select>
+                </div>
+
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                    <a asp-action="Index" class="btn btn-secondary">Xóa bộ lọc</a>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
-
+<div class="row">
+    <div class="col-md-12">
+        <ejs-grid id="recurringTransactions" dataSource="@Model" gridLines="None"
+                  allowSorting="true">
+            <e-grid-columns>
+                <e-grid-column headerText="Danh mục" field="Category.Title"></e-grid-column>
+                <e-grid-column headerText="Số tiền" field="FormattedAmount" textAlign="Right"></e-grid-column>
+                <e-grid-column headerText="Tần suất" field="FrequencyString"></e-grid-column>
+                <e-grid-column headerText="Ngày bắt đầu" field="StartDate" width="110px"
+                               type="date" format="dd-MM-yy" textAlign="Left"></e-grid-column>
+                <e-grid-column headerText="Ngày kết thúc" field="EndDate" width="110px"
+                               type="date" format="dd-MM-yy" textAlign="Left"></e-grid-column>
+           
+                <e-grid-column headerText="Thao tác" template="#actionColumnTemplate" width="100px"></e-grid-column>
+            </e-grid-columns>
+        </ejs-grid>
+        <partial name="_Pagination" model="@Model" />
+    </div>
+</div>
 
 
 @* template action *@
 <script id="actionColumnTemplate" type="text/x-template">
     <div class="d-flex flex-row justify-content-start">
-        <a class="btn btn-sm no-a-decoration" href="/recurringtransactions/CreateOrEdit/${RecurringTransactionId}">
+        <a class="btn btn-sm no-a-decoration" href="/RecurringTransactions/CreateOrEdit/${RecurringTransactionId}">
             <i class="fa-solid fa-pen fa-lg"></i>
         </a>
-        <form action="/recurringtransactions/DeleteConfirmed/${RecurringTransactionId}" method="post">
-    @Html.AntiForgeryToken()
+        <form action="/RecurringTransactions/DeleteConfirmed/${RecurringTransactionId}" method="post">
+            @Html.AntiForgeryToken()
             <button type="submit" class="btn btn-sm btn-link no-a-decoration"
-            onclick="return confirm(&quot;Are sure to delete this record?&quot;)">
+                    onclick="return confirm(&quot;Bạn có chắc chắn muốn xóa giao dịch định kỳ này?&quot;)">
                 <i class="fa-solid fa-trash-can fa-lg text-danger"></i>
             </button>
         </form>
     </div>
 </script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

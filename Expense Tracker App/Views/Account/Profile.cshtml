@@ -1,118 +1,227 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @inject UserManager<ApplicationUser> UserManager
 @{
+    ViewData["Title"] = "Profile";
     var currentUser = await UserManager.GetUserAsync(User);
-
+    // Dummy stats for demonstration
+    int totalTransactions = ViewBag.TotalTransactions ?? 0;
+    int totalBudgets = ViewBag.TotalBudgets ?? 0;
+    int totalCategories = ViewBag.TotalCategories ?? 0;
 }
 
-<div class="profile-user"  style="background-color:aliceblue; color:black;border-radius:1rem;display:block;">
-    
-    <div style="background-color:#808080; height:5rem;border-top-left-radius:1rem;border-top-right-radius:1rem">
+<div class="insta-profile-container">
+    <div class="insta-profile-header">
+        <div class="insta-profile-avatar">
+            <img src="@(currentUser != null && currentUser.ProfileImg != null && currentUser.ProfileImg.Length > 0
+                ? $"data:image/jpeg;base64,{Convert.ToBase64String(currentUser.ProfileImg)}"
+                : Url.Content("~/images/default.jpg"))"
+                alt="Profile Image"
+                title="Ghi chú..." />
+        </div>
+        <div class="insta-profile-info">
+            <div class="insta-profile-username">
+                <span>@currentUser?.UserName</span>
+                <a class="insta-btn" href="/Account/CompleteProfile">Chỉnh sửa trang cá nhân</a>
+
+                <button class="insta-btn insta-settings"><i class="fas fa-cog"></i></button>
+            </div>
+            <div class="insta-profile-stats">
+                <span><b>@totalTransactions</b> giao dịch</span>
+                <span><b>@totalBudgets</b> ngân sách</span>
+                <span><b>@totalCategories</b> danh mục</span>
+            </div>
+            <div class="insta-profile-fullname">@currentUser?.FullName</div>
+            <div class="insta-profile-bio">Quản lý chi tiêu, giúp quản lý cuộc sống của bạn tốt hơn.</div>
+        </div>
     </div>
-    <div class="p-3 card_information" >
-        <div class="mb-3" style="position: relative; width: 0; height: 50px">
-
-            <!-- Ảnh đại diện -->
-            <img id="profileImage"
-                 src="@(currentUser != null && currentUser.ProfileImg != null && currentUser.ProfileImg.Length > 0
-             ? $"data:image/jpeg;base64,{Convert.ToBase64String(currentUser.ProfileImg)}"
-             : Url.Content("~/images/default.jpg"))"
-                 alt="Profile Image"
-                 style="width: 105px; height: 100px; border-radius: 50%;
-            object-position:center; position:absolute;
-            top:-30px; border:black 1px solid; cursor: pointer;"
-                 data-bs-toggle="modal" data-bs-target="#imageModal" />
-
-            <!-- Modal Bootstrap -->
-            <div class="modal fade" id="imageModal" tabindex="-1" aria-spanledby="imageModalspan" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-body text-center">
-                            <img id="modalImage" src="" class="img-fluid" style="border-radius: 10px;" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-
-        </div> 
-        <div style="margin-top:50px;font-family:Pixelify_Sans;" class="information">
-            <div class="mb-3 px-3">
-                <h2>Information User</h2>
-            </div>
-            <div class="px-5">
-                <div class="mb-3 px-2">
-                    <span>Id User : </span>
-                    <p>@currentUser?.Id</p>
-                </div>
-                <div class="mb-3 px-2">
-                    <span>Full Name :</span>
-                    <p>@currentUser?.FullName</p>
-                </div>
-                <div class="mb-3 px-2">
-                    <span>Email :</span>
-                    <p>@currentUser?.Email</p>
-                </div>
-                <div class="mb-3 px-2">
-                    <span>Phone number :</span>
-                    <p>@currentUser?.PhoneNumber</p>
-                </div>
-                <div class="mb-3 px-2">
-                    <span>Date of birth :</span>
-                    <p>
-                        @string.Format("{0:dd-MM-yyyy}", currentUser?.DateOfBirth ?? DateTime.MinValue)
-                    </p>
-                </div>
-            </div>
+    <div class="insta-profile-details">
+        <div class="insta-detail">
+            <span class="insta-detail-label">ID người dùng:</span>
+            <span class="insta-detail-value" id="userId">@currentUser?.Id</span>
+            <button class="copy-btn" onclick="copyToClipboard('@currentUser?.Id')">
+                <i class="fas fa-copy"></i>
+            </button>
+        </div>
+      
+        <div class="insta-detail">
+            <span class="insta-detail-label">Số điện thoại:</span>
+            <span class="insta-detail-value">@(currentUser?.PhoneNumber ?? "Chưa cập nhật")</span>
+        </div>
+        <div class="insta-detail">
+            <span class="insta-detail-label">Ngày sinh:</span>
+            <span class="insta-detail-value">
+                @(currentUser?.DateOfBirth?.ToString("dd-MM-yyyy") ?? "Chưa cập nhật")
+            </span>
         </div>
     </div>
 </div>
+<style>
+.insta-profile-container {
+    max-width: 900px;
+    margin: 40px auto;
+    background: #23272b;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    padding: 32px 32px 24px 32px;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    color: #f1f1f1;
+}
+.insta-profile-header {
+    display: flex;
+    align-items: center;
+    gap: 48px;
+}
+.insta-profile-avatar {
+    flex-shrink: 0;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    border: 2px solid #dbdbdb;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fafafa;
+    position: relative;
+}
+.insta-profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+.insta-profile-info {
+    flex: 1;
+}
+.insta-profile-username {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    font-size: 1.5rem;
+    margin-bottom: 18px;
+}
+.insta-btn {
+    background: #efefef;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 16px;
+    font-size: 1rem;
+    margin-left: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-decoration: none;
+    color: #222;
+    display: inline-block;
+}
+.insta-btn:hover {
+    background: #e0e0e0;
+}
+.insta-settings {
+    font-size: 1.2rem;
+    padding: 6px 10px;
+}
+.insta-profile-stats {
+    display: flex;
+    gap: 32px;
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+}
+.insta-profile-fullname {
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+}
+.insta-profile-bio {
+    color: #888;
+    font-size: 1rem;
+    margin-bottom: 8px;
+}
+.insta-profile-details {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    margin-top: 36px;
+    padding-left: 16px;
+}
+.insta-detail {
+    max-width:60%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.1rem;
+    background: #fafafa;
+    border-radius: 8px;
+    padding: 12px 18px;
+    margin-bottom: 8px;
+    color: #555;
+}
 
+.insta-detail-label {
+    font-weight: 600;
+    min-width: 90px;
+}
+.copy-btn {
+    background: none;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: background 0.2s;
+}
+.copy-btn:hover {
+    color: #5ac8fa;
+    background: rgba(90, 200, 250, 0.1);
+}
+@@media (max-width: 900px) {
+    .insta-profile-container {
+        padding: 16px 4px 16px 4px;
+        border-radius: 8px;
+    }
+    .insta-profile-header {
+        flex-direction: column;
+        align-items: center;
+        gap: 18px;
+    }
+    .insta-profile-avatar {
+        width: 90px;
+        height: 90px;
+    }
+    .insta-profile-info {
+        width: 100%;
+        text-align: center;
+    }
+    .insta-profile-username {
+        flex-direction: column;
+        gap: 8px;
+        font-size: 1.1rem;
+    }
+    .insta-profile-fullname,
+    .insta-profile-bio {
+        font-size: 1rem;
+    }
+    .insta-profile-details {
+        max-width: 100%;
+        flex-direction: column;
+        gap: 10px;
+        padding-left: 0;
+        margin-top: 18px;
+    }
+    .insta-detail {
+        font-size: 1rem;
+        padding: 10px 8px;
+        margin-bottom: 4px;
+        width: 100%;
+        justify-content: center;
+    }
+}
+</style>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        document.getElementById("profileImage").addEventListener("click", function () {
-            let imgSrc = this.getAttribute("src"); // Lấy src từ ảnh nhỏ
-            let modalImg = document.getElementById("modalImage");
-
-            if (imgSrc && modalImg) {
-                modalImg.setAttribute("src", imgSrc); // Gán ảnh vào modal
-            } else {
-                console.error("Không tìm thấy ảnh hoặc modal!");
-            }
-        });
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        alert('Đã copy ID người dùng!');
     });
+}
 </script>
-<style>
-    .profile-picture {
-        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    }
-    #profileImage {
-        opacity: 0.85; 
-        transition: opacity 0.2s ease-in-out; 
-    }
-
-        #profileImage:hover {
-            opacity: 1;
-        }
-
-        .card_information {
-            border-bottom-left-radius : 1rem;
-            border-bottom-right-radius : 1rem;
-            background: -webkit-linear-gradient(70deg, #ff6464 40%, #5ac8fa 40%);
-            background: -o-linear-gradient(70deg, #ff6464 40%, #5ac8fa 40%);
-            background: -moz-linear-gradient(70deg, #ff6464 40%, #5ac8fa 40%);
-            background: linear-gradient(70deg, #ff6464 40%, #5ac8fa 40%);
-        }
-            .information p {
-                padding : 0px 0px 0px 2px;   
-                box-shadow : 1px;
-                 transition-duration : 1s ease-in-out;  
-            }
-            .information p:hover {
-                text-decoration: underline;
-            }
-
-
-</style>

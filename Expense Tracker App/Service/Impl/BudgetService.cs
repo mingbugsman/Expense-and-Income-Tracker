@@ -62,9 +62,44 @@ namespace Expense_Tracker_App.Service.Impl
             var category = await _context.Categories.FindAsync(categoryId);
             string categoryName = category?.Title ?? "Unknown";
 
-            string message = NotificationMessageFactory.GenerateMessage(NotificationType.BudgetLimitExceed, amount, categoryName, DateTime.Now);
+            string message = NotificationMessageFactory.BudgetLimitExceed(amount, categoryName, DateTime.UtcNow);
 
             await _notificationService.AddLogAsync(userId,NotificationType.BudgetLimitExceed, message);
+        }
+
+        public async Task<List<Budget>> SearchBudgetsAsync(string userId, int? categoryId, DateTime? startDate, DateTime? endDate, decimal? minAmount, decimal? maxAmount)
+        {
+            var query = _context.Budgets
+                .Include(b => b.Category)
+                .Where(b => b.UserId == userId);
+
+            // Apply search filters if provided
+            if (categoryId.HasValue && categoryId.Value > 0)
+            {
+                query = query.Where(b => b.CategoryId == categoryId.Value);
+            }
+
+            if (startDate.HasValue)
+            {
+                query = query.Where(b => b.Budget_StartDate >= startDate.Value);
+            }
+
+            if (endDate.HasValue)
+            {
+                query = query.Where(b => b.Budget_EndDate <= endDate.Value);
+            }
+
+            if (minAmount.HasValue)
+            {
+                query = query.Where(b => b.BudgetAmount >= minAmount.Value);
+            }
+
+            if (maxAmount.HasValue)
+            {
+                query = query.Where(b => b.BudgetAmount <= maxAmount.Value);
+            }
+
+            return await query.OrderByDescending(b => b.Budget_StartDate).ToListAsync();
         }
     }
 }

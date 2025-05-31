@@ -1,0 +1,77 @@
+@{
+    ViewData["Title"] = "Email Change Confirmation";
+}
+
+<style>
+    .login-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #1a1f25 0%, #17181f 100%);
+    }
+
+    .login-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 3rem;
+        width: 100%;
+        max-width: 450px;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        text-align: center;
+    }
+
+    .login-title {
+        color: #ffffff;
+        font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+    }
+
+    .confirmation-message {
+        color: #e9ecef;
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 2rem;
+    }
+
+    .email-icon {
+        font-size: 3rem;
+        color: #4dabf7;
+        margin-bottom: 1.5rem;
+    }
+
+    .auth-link {
+        color: #4dabf7;
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: color 0.3s ease;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        background: rgba(77, 171, 247, 0.1);
+        display: inline-block;
+        margin-top: 1rem;
+    }
+
+    .auth-link:hover {
+        color: #3b82f6;
+        background: rgba(77, 171, 247, 0.2);
+        text-decoration: none;
+    }
+</style>
+<div class="login-container">
+    <div class="login-card">
+        <div class="email-icon">
+            <i class="fas fa-envelope"></i>
+        </div>
+        <h1 class="login-title">Kiểm Tra Email Mới Của Bạn</h1>
+        <div class="confirmation-message">
+            <p>Chúng tôi đã gửi một liên kết xác nhận đến địa chỉ email mới của bạn.</p>
+            <p>Vui lòng kiểm tra hộp thư đến và nhấp vào liên kết để xác nhận thay đổi.</p>
+            <p>Nếu bạn không thấy email, vui lòng kiểm tra thư mục spam.</p>
+        </div>
+        <a href="/Account/Profile" class="auth-link">Quay lại Trang Cá Nhân</a>
+    </div>
+</div>

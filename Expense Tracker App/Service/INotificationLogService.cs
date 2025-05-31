@@ -8,6 +8,8 @@ namespace Expense_Tracker_App.Service
     public interface INotificationLogService
     {
         Task AddLogAsync(string userId, NotificationType type, string message);
-        IPagedList<NotificationLog> GetNotificationLogsByUserId(string userId);
+        IPagedList<NotificationLog> GetNotificationLogsByUserId(string userId, int pageNumber = 1, int pageSize = 10);
+        int GetUnreadNotificationCount(string userId);
+        void MarkNotificationsAsRead(string userId);
     }
 }

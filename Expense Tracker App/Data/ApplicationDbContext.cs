@@ -63,6 +63,10 @@ namespace Expense_Tracker_App.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<RecurringTransaction>()
+                .Property(rt => rt.Frequency)
+                .HasConversion<String>();
+
+            modelBuilder.Entity<RecurringTransaction>()
                 .HasOne(rt => rt.User)
                 .WithMany(u => u.RecurringTransactions)
                 .HasForeignKey(rt => rt.UserId)

@@ -8,18 +8,25 @@ using Microsoft.EntityFrameworkCore;
 using Expense_Tracker_App.Data;
 using Expense_Tracker_App.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
+using Expense_Tracker_App.Service;
+using X.PagedList;
+using X.PagedList.Extensions;
 
 namespace Expense_Tracker_App.Controllers
 {
+    [Authorize]
     public class BudgetsController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IBudgetService _budgetService;
 
-        public BudgetsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public BudgetsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBudgetService budgetService)
         {
             _context = context;
             _userManager = userManager;
+            _budgetService = budgetService;
         }
 
         [NonAction]
@@ -33,29 +40,28 @@ namespace Expense_Tracker_App.Controllers
             categories.Insert(0, new Category { CategoryId = 0, Title = "Choose a category" });
             ViewBag.Categories = categories;
         }
+
         private string GetUserId() => _userManager.GetUserId(User);
 
-
         // GET: Budgets
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? page, int pageSize = 10)
         {
-            var userId = GetUserId();
-            var budgets = _context.Budgets
-                .Include(t => t.Category)
+            var budgets = await _context.Budgets
+                .Include(b => b.Category)
+                .OrderByDescending(b => b.Budget_StartDate)
+                .ToListAsync();
+            int pageNumber = page ?? 1;
+            var pagedBudgets = budgets.ToPagedList(pageNumber, pageSize);
 
-                .Where(t => t.UserId == userId);
+            PopulateCategories();
+            ViewBag.CategoryId = null;
+            ViewBag.StartDate = null;
+            ViewBag.EndDate = null;
+            ViewBag.MinAmount = null;
+            ViewBag.MaxAmount = null;
 
-            foreach (var item in budgets)
-            {
-                Console.WriteLine(item.UserId);
-                Console.WriteLine(item.BudgetID);
-                Console.WriteLine(item.BudgetAmount);
-            }
-
-            return View(await budgets.ToListAsync());
+            return View(pagedBudgets);
         }
-
-        
 
         // GET: Budgets/Create
         public IActionResult CreateOrEdit(int id = 0)
@@ -73,15 +79,13 @@ namespace Expense_Tracker_App.Controllers
         }
 
         // POST: Budgets/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateOrEdit([Bind("BudgetID,BudgetAmount," +
                                                     "Budget_StartDate,Budget_EndDate,UserId,CategoryId")] 
                                                     Budget budget)
         {
-            budget.UserId = GetUserId(); // Đảm bảo chỉ thao tác với dữ liệu của user hiện tại
+            budget.UserId = GetUserId();
             if (!ModelState.IsValid)
             {
                 foreach (var error in ModelState)
@@ -95,25 +99,22 @@ namespace Expense_Tracker_App.Controllers
                 return View(budget);
             }
 
-
             if (budget.BudgetID == 0)
                 _context.Add(budget);
             else
             {
-                var existingTransaction = _context.Transactions
-                    .FirstOrDefault(t => t.TransactionId == budget.BudgetID && t.UserId == GetUserId());
+                var existingBudget = await _context.Budgets
+                    .FirstOrDefaultAsync(t => t.BudgetID == budget.BudgetID && t.UserId == GetUserId());
 
-                if (existingTransaction == null)
+                if (existingBudget == null)
                     return NotFound();
 
-                _context.Entry(existingTransaction).CurrentValues.SetValues(budget);
+                _context.Entry(existingBudget).CurrentValues.SetValues(budget);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
-    
 
         // POST: Budgets/Delete/5
         [HttpPost, ActionName("DeleteConfirmed")]
@@ -129,6 +130,5 @@ namespace Expense_Tracker_App.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
     }
 }

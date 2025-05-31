@@ -1,0 +1,203 @@
+@{
+    ViewData["PageTitle"] = "Về chúng tôi";
+}
+
+<style>
+    .about-section {
+        margin-top : 1.5em;
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    .mission-vision-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 2rem;
+        height: 100%;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .mission-vision-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .feature-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 1.5rem;
+        height: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .feature-icon {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #4dabf7 0%, #3b82f6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .benefit-item {
+        padding: 1.5rem;
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .benefit-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .benefit-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #4dabf7 0%, #3b82f6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .section-title {
+        position: relative;
+        display: inline-block;
+        margin-bottom: 2rem;
+        padding-bottom: 0.5rem;
+    }
+
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background: linear-gradient(135deg, #4dabf7 0%, #3b82f6 100%);
+        border-radius: 3px;
+    }
+
+    .text-gradient {
+        background: linear-gradient(135deg, #4dabf7 0%, #3b82f6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+</style>
+
+<div class="row about-section">
+    <div class="col-md-12">
+        <div class="widget p-4" style="background-color:#212b36">
+            <h2 class="text-center mb-5 text-gradient">Về Expense Tracker</h2>
+            
+            <div class="row mb-5">
+                <div class="col-md-6 mb-4">
+                    <div class="mission-vision-card">
+                        <h4 class="section-title">Sứ mệnh của chúng tôi</h4>
+                        <p>
+                            Tại Expense Tracker, chúng tôi tin rằng quản lý tài chính nên đơn giản, trực quan và dễ tiếp cận với mọi người. 
+                            Sứ mệnh của chúng tôi là trao quyền cho mọi người kiểm soát tài chính của họ thông qua một nền tảng dễ sử dụng, 
+                            giúp việc theo dõi chi tiêu và quản lý ngân sách trở nên dễ dàng.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="mission-vision-card">
+                        <h4 class="section-title">Tầm nhìn của chúng tôi</h4>
+                        <p>
+                            Chúng tôi mong muốn một thế giới nơi mọi người đều có công cụ và kiến thức để đưa ra các quyết định tài chính sáng suốt. 
+                            Bằng cách cung cấp giải pháp theo dõi chi tiêu toàn diện, chúng tôi hướng đến việc giúp người dùng đạt được mục tiêu tài chính 
+                            và xây dựng một tương lai tài chính vững chắc.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-5">
+                <div class="col-md-12">
+                    <h4 class="section-title">Tính năng chính</h4>
+                    <div class="row">
+                        <div class="col-md-4 mb-4">
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="fa-solid fa-chart-pie"></i>
+                                </div>
+                                <h5 class="card-title">Theo dõi chi tiêu</h5>
+                                <p class="card-text">Theo dõi chi tiêu hàng ngày với phân loại chi tiết và báo cáo thông minh.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="fa-solid fa-wallet"></i>
+                                </div>
+                                <h5 class="card-title">Quản lý ngân sách</h5>
+                                <p class="card-text">Thiết lập và giám sát ngân sách để đạt được mục tiêu tài chính của bạn.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="fa-solid fa-rotate"></i>
+                                </div>
+                                <h5 class="card-title">Giao dịch định kỳ</h5>
+                                <p class="card-text">Tự động theo dõi chi tiêu và thu nhập định kỳ để lập kế hoạch tài chính tốt hơn.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <h4 class="section-title">Tại sao chọn chúng tôi?</h4>
+                    <div class="row">
+                        <div class="col-md-3 mb-4">
+                            <div class="benefit-item text-center">
+                                <div class="benefit-icon">
+                                    <i class="fa-solid fa-shield-halved"></i>
+                                </div>
+                                <h5>Bảo mật</h5>
+                                <p>Dữ liệu của bạn được bảo vệ bằng các biện pháp bảo mật tiêu chuẩn ngành.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-4">
+                            <div class="benefit-item text-center">
+                                <div class="benefit-icon">
+                                    <i class="fa-solid fa-bolt"></i>
+                                </div>
+                                <h5>Nhanh chóng</h5>
+                                <p>Giao diện nhanh và phản hồi nhanh để theo dõi chi tiêu hiệu quả.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-4">
+                            <div class="benefit-item text-center">
+                                <div class="benefit-icon">
+                                    <i class="fa-solid fa-mobile-screen"></i>
+                                </div>
+                                <h5>Đa nền tảng</h5>
+                                <p>Truy cập tài chính của bạn từ mọi thiết bị, mọi nơi, mọi lúc.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-4">
+                            <div class="benefit-item text-center">
+                                <div class="benefit-icon">
+                                    <i class="fa-solid fa-headset"></i>
+                                </div>
+                                <h5>Hỗ trợ</h5>
+                                <p>Đội ngũ hỗ trợ chuyên nghiệp sẵn sàng giúp bạn thành công.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

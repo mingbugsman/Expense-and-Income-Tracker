@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
+using X.PagedList;
+using X.PagedList.Extensions;
 
 namespace Expense_Tracker_App.Controllers
 {
@@ -24,11 +26,18 @@ namespace Expense_Tracker_App.Controllers
 
         private string GetUserId() => _userManager.GetUserId(User);
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? searchTerm, string? type, int? page, int pageSize = 10)
         {
+            int pageNumber = page ?? 1;
+            
             var userId = GetUserId();
-            var categories = await _categoryService.GetCategoriesByUserIdAsync(userId);
-            return View(categories);
+            var categories = await _categoryService.SearchCategoriesAsync(userId, searchTerm, type);
+            var pagedCategories = categories.ToPagedList(pageNumber, pageSize);
+            
+            ViewBag.SearchTerm = searchTerm;
+            ViewBag.Type = type;
+            
+            return View(pagedCategories);
         }
 
         public async Task<IActionResult> CreateOrEdit(int id = 0)
@@ -53,7 +62,6 @@ namespace Expense_Tracker_App.Controllers
                 return View(category);
 
             if (category.CategoryId == 0)
-
                 await _categoryService.AddCategoryAsync(category);
             else
                 await _categoryService.UpdateCategoryAsync(category);

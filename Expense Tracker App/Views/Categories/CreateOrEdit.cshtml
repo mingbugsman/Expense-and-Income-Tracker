@@ -1,47 +1,46 @@
-﻿ @model Expense_Tracker_App.Models.Category
+﻿@model Expense_Tracker_App.Models.Category
 
-    @{
-        ViewData["PageTitle"] = Model.CategoryId == 0 ? "Create a new Category" : "Edit Category";
-        ViewData["PageActionText"] = "Back to List";
-        ViewData["PageActionUrl"] = "/Categories";
-    }
+@{
+    ViewData["PageTitle"] = Model.CategoryId == 0 ? "Tạo danh mục mới" : "Chỉnh sửa danh mục";
+    ViewData["PageActionText"] = "Quay lại danh sách";
+    ViewData["PageActionUrl"] = "/Categories";
+}
 
-    <hr />
-    <div class="row">
-        <div class="col-md-7">
-            <div class="widget p-5">
-                <form asp-action="CreateOrEdit">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <input type="hidden" asp-for="@Model.CategoryId" />
-                    <div class="mb-3">
-                        <div class='e-btn-group custom-rbt-group'>
-                            <input type="radio" id="radioleft" name="Type" value="Expense" checked="@(Model.Type =="Expense")" />
-                            <label class="e-btn" for="radioleft">Expense</label>
-                            <input type="radio" id="radiomiddle" name="Type" value="Income" checked="@(Model.Type =="Income")" />
-                            <label class="e-btn" for="radiomiddle">Income</label>
-                        </div>
-                        <span asp-validation-for="Type" class="text-danger"></span>
+<hr />
+<div class="row">
+    <div class="col-md-7">
+        <div class="widget p-5">
+            <form asp-action="CreateOrEdit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="@Model.CategoryId" />
+                <div class="mb-3">
+                    <div class='e-btn-group custom-rbt-group'>
+                        <input type="radio" id="radioleft" name="Type" value="Expense" checked="@(Model.Type =="Expense")" />
+                        <label class="e-btn" for="radioleft">Chi tiêu</label>
+                        <input type="radio" id="radiomiddle" name="Type" value="Income" checked="@(Model.Type =="Income")" />
+                        <label class="e-btn" for="radiomiddle">Thu nhập</label>
                     </div>
-                
-                    <div class="mb-3">
-                        <label>Title</label>
-                        <ejs-textbox id="title" placeholder="Title..." ejs-for="Title"></ejs-textbox>
-                        <span asp-validation-for="Title" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <ejs-button content="submit" id="submit" cssClass="e-success"></ejs-button>
-                    </div>
-                </form>
-           </div>
-        </div>
-        <div class="col-md-5">
-            <div class="widget h-100 d-flex justify-content-center align-items-center">
-                <i class="fa-solid fa-shapes fa-2"></i>
-            </div>
+                    <span asp-validation-for="Type" class="text-danger"></span>
+                </div>
+            
+                <div class="mb-3">
+                    <label>Tên danh mục</label>
+                    <ejs-textbox id="title" placeholder="Nhập tên danh mục..." ejs-for="Title"></ejs-textbox>
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <ejs-button content="Lưu" id="submit" cssClass="e-success"></ejs-button>
+                </div>
+            </form>
         </div>
     </div>
+    <div class="col-md-5">
+        <div class="widget h-100 d-flex justify-content-center align-items-center">
+            <i class="fa-solid fa-shapes fa-2"></i>
+        </div>
+    </div>
+</div>
 
-
-    @section Scripts {
-        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    }
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

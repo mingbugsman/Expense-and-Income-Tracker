@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 using Expense_Tracker_App.Models;
 using Expense_Tracker_App.Service;
+using X.PagedList;
+using X.PagedList.Extensions;
 
 namespace Expense_Tracker_App.Controllers
 {
@@ -12,21 +14,50 @@ namespace Expense_Tracker_App.Controllers
     {
         private readonly ITransactionService _transactionService;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IExportService _exportService;
 
-        public TransactionsController(ITransactionService transactionService, UserManager<ApplicationUser> userManager)
+        public TransactionsController(
+            ITransactionService transactionService, 
+            UserManager<ApplicationUser> userManager,
+            IExportService exportService)
         {
             _transactionService = transactionService;
             _userManager = userManager;
+            _exportService = exportService;
         }
 
         private string GetUserId() => _userManager.GetUserId(User);
 
         // GET: Transactions
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(
+            string? searchTerm, 
+            int? categoryId, 
+            DateTime? startDate, 
+            DateTime? endDate, 
+            decimal? minAmount, 
+            decimal? maxAmount, 
+            int? page,
+            int pageSize = 10)
         {
             var userId = GetUserId();
-            var transactions = await _transactionService.GetUserTransactionsAsync(userId);
-            return View(transactions);
+            int pageNumber = page ?? 1;
+
+            // Get filtered transactions with pagination
+            var transactions = await _transactionService.SearchTransactionsAsync(
+                userId, searchTerm, categoryId, startDate, endDate, minAmount, maxAmount);
+
+            var pagedTransactions = transactions.ToPagedList(pageNumber, pageSize);
+
+            // Pass data to the view
+            ViewBag.Categories = await _transactionService.GetUserCategoriesAsync(userId);
+            ViewBag.SearchTerm = searchTerm;
+            ViewBag.CategoryId = categoryId;
+            ViewBag.StartDate = startDate;
+            ViewBag.EndDate = endDate;
+            ViewBag.MinAmount = minAmount;
+            ViewBag.MaxAmount = maxAmount;
+
+            return View(pagedTransactions);
         }
 
         // GET: Transactions/CreateOrEdit
@@ -95,6 +126,45 @@ namespace Expense_Tracker_App.Controllers
                 return NotFound();
 
             return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> Details(int id)
+        {
+            var transaction = await _transactionService.GetTransactionByIdAsync(id, GetUserId());
+            if (transaction == null)
+            {
+                return NotFound();
+            }
+
+            return View(transaction);
+        }
+
+        // GET: Transactions/HelpCenter
+        public IActionResult HelpCenter()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> Export(
+            string? searchTerm = null,
+            int? categoryId = null,
+            DateTime? startDate = null,
+            DateTime? endDate = null,
+            decimal? minAmount = null,
+            decimal? maxAmount = null)
+        {
+            var userId = GetUserId();
+            var csvBytes = await _exportService.ExportTransactionsToCsvAsync(
+                userId, searchTerm, categoryId, startDate, endDate, minAmount, maxAmount);
+
+            var fileName = $"transactions_{DateTime.Now:yyyyMMdd}";
+            if (startDate.HasValue && endDate.HasValue)
+            {
+                fileName += $"_{startDate:yyyyMMdd}-{endDate:yyyyMMdd}";
+            }
+            fileName += ".csv";
+
+            return File(csvBytes, "text/csv", fileName);
         }
     }
 }

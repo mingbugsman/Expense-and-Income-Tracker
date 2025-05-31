@@ -1,0 +1,195 @@
+@{
+    ViewData["Title"] = "Điều khoản dịch vụ";
+}
+
+<style>
+    .terms-section {
+        padding: 4rem 0;
+        background: linear-gradient(135deg, #1a1f25 0%, #17181f 100%);
+        min-height: calc(100vh - 200px);
+    }
+
+    .terms-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+
+    .terms-content {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 3rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .terms-title {
+        color: #fff;
+        font-size: 2.5rem;
+        margin-bottom: 2rem;
+        background: linear-gradient(135deg, #4dabf7 0%, #3b82f6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .terms-section-title {
+        color: #fff;
+        font-size: 1.5rem;
+        margin: 2rem 0 1rem;
+        font-weight: 600;
+    }
+
+    .terms-text {
+        color: rgba(255, 255, 255, 0.7);
+        line-height: 1.8;
+        margin-bottom: 1.5rem;
+    }
+
+    .terms-list {
+        list-style: none;
+        padding: 0;
+        margin: 1rem 0;
+    }
+
+    .terms-list li {
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 1rem;
+        padding-left: 1.5rem;
+        position: relative;
+    }
+
+    .terms-list li:before {
+        content: "•";
+        color: #4dabf7;
+        position: absolute;
+        left: 0;
+    }
+
+    .last-updated {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.9rem;
+        margin-top: 3rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    @@media (max-width: 768px) {
+        .terms-container {
+            padding: 0 1rem;
+        }
+
+        .terms-content {
+            padding: 2rem;
+        }
+
+        .terms-title {
+            font-size: 2rem;
+        }
+    }
+</style>
+
+<div class="terms-section">
+    <div class="terms-container">
+        <div class="terms-content">
+            <h1 class="terms-title">Điều khoản dịch vụ</h1>
+
+            <p class="terms-text">
+                Chào mừng đến với Expense Tracker. Bằng việc truy cập và sử dụng ứng dụng của chúng tôi, bạn đồng ý tuân theo các Điều khoản dịch vụ này. Vui lòng đọc kỹ các điều khoản này trước khi sử dụng dịch vụ của chúng tôi.
+            </p>
+
+            <h2 class="terms-section-title">1. Chấp nhận điều khoản</h2>
+            <p class="terms-text">
+                Bằng việc truy cập hoặc sử dụng Expense Tracker, bạn đồng ý tuân theo các Điều khoản dịch vụ này và tất cả các luật và quy định hiện hành. Nếu bạn không đồng ý với bất kỳ điều khoản nào, bạn không được phép sử dụng hoặc truy cập ứng dụng này.
+            </p>
+
+            <h2 class="terms-section-title">2. Giấy phép sử dụng</h2>
+            <p class="terms-text">
+                Bạn được cấp phép tạm thời để sử dụng Expense Tracker cho mục đích cá nhân, phi thương mại. Giấy phép này không bao gồm:
+            </p>
+            <ul class="terms-list">
+                <li>Sửa đổi hoặc sao chép tài liệu</li>
+                <li>Sử dụng tài liệu cho bất kỳ mục đích thương mại nào</li>
+                <li>Cố gắng đảo ngược kỹ thuật bất kỳ phần mềm nào trong ứng dụng</li>
+                <li>Xóa bất kỳ thông báo bản quyền hoặc sở hữu trí tuệ nào</li>
+                <li>Chuyển tài liệu cho người khác</li>
+            </ul>
+
+            <h2 class="terms-section-title">3. Tài khoản người dùng</h2>
+            <p class="terms-text">
+                Để sử dụng một số tính năng của ứng dụng, bạn phải đăng ký tài khoản. Bạn đồng ý:
+            </p>
+            <ul class="terms-list">
+                <li>Cung cấp thông tin chính xác và đầy đủ</li>
+                <li>Duy trì bảo mật tài khoản của bạn</li>
+                <li>Cập nhật kịp thời mọi thay đổi thông tin của bạn</li>
+                <li>Chịu trách nhiệm cho tất cả các hoạt động dưới tài khoản của bạn</li>
+            </ul>
+
+            <h2 class="terms-section-title">4. Thông tin tài chính</h2>
+            <p class="terms-text">
+                Trong khi Expense Tracker giúp bạn theo dõi tài chính, chúng tôi:
+            </p>
+            <ul class="terms-list">
+                <li>Không cung cấp tư vấn tài chính</li>
+                <li>Không chịu trách nhiệm cho các quyết định tài chính được đưa ra khi sử dụng dịch vụ của chúng tôi</li>
+                <li>Không đảm bảo độ chính xác của các tính toán tài chính</li>
+                <li>Khuyến nghị tham khảo ý kiến chuyên gia tài chính cho các quyết định quan trọng</li>
+            </ul>
+
+            <h2 class="terms-section-title">5. Lưu trữ và bảo mật dữ liệu</h2>
+            <p class="terms-text">
+                Chúng tôi triển khai các biện pháp bảo mật để bảo vệ dữ liệu của bạn, nhưng bạn thừa nhận rằng:
+            </p>
+            <ul class="terms-list">
+                <li>Không có phương thức truyền tải nào qua Internet là 100% an toàn</li>
+                <li>Chúng tôi không thể đảm bảo an toàn tuyệt đối cho dữ liệu của bạn</li>
+                <li>Bạn chịu trách nhiệm duy trì bảo mật tài khoản của mình</li>
+                <li>Bạn nên thường xuyên sao lưu dữ liệu tài chính quan trọng của mình</li>
+            </ul>
+
+            <h2 class="terms-section-title">6. Các hoạt động bị cấm</h2>
+            <p class="terms-text">
+                Bạn đồng ý không:
+            </p>
+            <ul class="terms-list">
+                <li>Sử dụng dịch vụ cho bất kỳ mục đích bất hợp pháp nào</li>
+                <li>Cố gắng truy cập trái phép vào bất kỳ phần nào của dịch vụ</li>
+                <li>Can thiệp vào hoạt động bình thường của dịch vụ</li>
+                <li>Sử dụng dịch vụ để quấy rối, lạm dụng hoặc gây hại cho người khác</li>
+                <li>Chia sẻ thông tin đăng nhập tài khoản của bạn với người khác</li>
+            </ul>
+
+            <h2 class="terms-section-title">7. Sửa đổi dịch vụ</h2>
+            <p class="terms-text">
+                Chúng tôi giữ quyền:
+            </p>
+            <ul class="terms-list">
+                <li>Sửa đổi hoặc ngừng dịch vụ bất cứ lúc nào</li>
+                <li>Thay đổi tính năng hoặc chức năng mà không cần thông báo</li>
+                <li>Cập nhật giá với thông báo hợp lý</li>
+                <li>Tạm ngưng hoặc chấm dứt tài khoản vi phạm các điều khoản này</li>
+            </ul>
+
+            <h2 class="terms-section-title">8. Giới hạn trách nhiệm</h2>
+            <p class="terms-text">
+                Expense Tracker sẽ không chịu trách nhiệm cho bất kỳ thiệt hại gián tiếp, ngẫu nhiên, đặc biệt, hậu quả hoặc trừng phạt nào phát sinh từ việc bạn sử dụng hoặc không thể sử dụng dịch vụ.
+            </p>
+
+            <h2 class="terms-section-title">9. Thay đổi điều khoản</h2>
+            <p class="terms-text">
+                Chúng tôi giữ quyền sửa đổi các điều khoản này bất cứ lúc nào. Chúng tôi sẽ thông báo cho người dùng về bất kỳ thay đổi quan trọng nào qua email hoặc thông qua ứng dụng. Việc tiếp tục sử dụng dịch vụ sau các sửa đổi đó được coi là chấp nhận các điều khoản mới.
+            </p>
+
+            <h2 class="terms-section-title">10. Thông tin liên hệ</h2>
+            <p class="terms-text">
+                Nếu bạn có bất kỳ câu hỏi nào về các Điều khoản dịch vụ này, vui lòng liên hệ với chúng tôi tại:
+            </p>
+            <ul class="terms-list">
+                <li>Email: legal@expensetracker.com</li>
+                <li>Điện thoại: +1 (555) 123-4567</li>
+            </ul>
+
+            <p class="last-updated">Cập nhật lần cuối: @DateTime.Now.ToString("dd/MM/yyyy")</p>
+        </div>
+    </div>
+</div> 

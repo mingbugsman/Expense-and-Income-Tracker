@@ -5,6 +5,8 @@ using Expense_Tracker_App.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Expense_Tracker_App.Service;
 using Expense_Tracker_App.Service.Impl;
+using Expense_Tracker_App.Repository;
+using Expense_Tracker_App.Repository.Impl;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +19,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Logging.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.None);
 builder.Logging.AddFilter("Microsoft.EntityFrameworkCore", LogLevel.Warning);
 
+// Services layer
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<INotificationLogService, NotificationService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
@@ -25,8 +28,16 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
 builder.Services.AddScoped<IExportService, ExportService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IDashBoardService, DashBoardService>();
 builder.Services.AddHostedService<RecurringTransactionCronJobService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
 
+// Repository layer
+builder.Services.AddScoped<IBudgetRepository, BudgetRepository>();
+builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
+builder.Services.AddScoped<IRecurringTransactionRepository, RecurringTransactionRepository>();
+builder.Services.AddScoped<IDashBoardRepository, DashBoardRepository>();
+builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {

@@ -11,5 +11,7 @@ namespace Expense_Tracker_App.Service
         IPagedList<NotificationLog> GetNotificationLogsByUserId(string userId, int pageNumber = 1, int pageSize = 10);
         int GetUnreadNotificationCount(string userId);
         void MarkNotificationsAsRead(string userId);
+        Task<int> GetUnreadCountAsync(string userId);
+        NotificationLog? GetNotificationLogById(int id, string userId);
     }
 }

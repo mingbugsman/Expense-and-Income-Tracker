@@ -2,7 +2,8 @@
 using Expense_Tracker_App.Models;
 using Expense_Tracker_App.Enum;
 using Microsoft.EntityFrameworkCore;
-using NuGet.Protocol;
+using X.PagedList;
+using X.PagedList.Extensions;
 
 namespace Expense_Tracker_App.Service.Impl
 {
@@ -10,12 +11,14 @@ namespace Expense_Tracker_App.Service.Impl
     {
         private readonly ApplicationDbContext _context;
         private readonly INotificationLogService _notificationService;
-        private readonly ILogger<BudgetService> logger;
-        public BudgetService(ApplicationDbContext context, INotificationLogService notificationService, ILogger<BudgetService> logger)
+        private readonly ILogger<BudgetService> _logger;
+        private readonly IBudgetRepository _budgetRepository;
+        public BudgetService(ApplicationDbContext context, INotificationLogService notificationService, ILogger<BudgetService> logger, IBudgetRepository budgetRepository)
         {
             _context = context;
             _notificationService = notificationService;
-            this.logger = logger;
+            _logger = logger;
+            _budgetRepository = budgetRepository;
         }
 
         public async Task<bool> IsTransactionAllowed(string userId, int categoryId, decimal amount)
@@ -24,12 +27,7 @@ namespace Expense_Tracker_App.Service.Impl
             await Console.Out.WriteLineAsync(userId.ToString() + " " +categoryId + " " +amount.ToString());
 
             // Lấy ngân sách đang hoạt động cho category của user
-            var budget = await _context.Budgets
-                .Where(b => b.UserId == userId
-                         && b.CategoryId == categoryId
-                         && b.Budget_StartDate <= now
-                         && b.Budget_EndDate >= now)
-                .FirstOrDefaultAsync();
+            var budget = await _budgetRepository.GetActiveBudgetAsync(userId, categoryId, now);
 
             if (budget == null)
             {
@@ -37,15 +35,10 @@ namespace Expense_Tracker_App.Service.Impl
             }
 
             // Tính tổng số tiền đã chi tiêu trong khoảng thời gian ngân sách
-            var totalSpent = await _context.Transactions
-                .Where(t => t.UserId == userId
-                         && t.CategoryId == categoryId
-                         && t.TransactionDate >= budget.Budget_StartDate
-                         && t.TransactionDate <= budget.Budget_EndDate)
-                .SumAsync(t => t.Amount);
+            var totalSpent = await _budgetRepository.GetTotalSpentAsync(userId, categoryId, budget.Budget_StartDate, budget.Budget_EndDate);
 
 
-            logger.LogInformation("TOTAL SPENT : " +totalSpent.ToString());
+            _logger.LogInformation("TOTAL SPENT : " +totalSpent.ToString());
 
             // Kiểm tra nếu thêm giao dịch mới sẽ vượt quá ngân sách
             if (totalSpent + amount > budget.BudgetAmount)
@@ -69,37 +62,48 @@ namespace Expense_Tracker_App.Service.Impl
 
         public async Task<List<Budget>> SearchBudgetsAsync(string userId, int? categoryId, DateTime? startDate, DateTime? endDate, decimal? minAmount, decimal? maxAmount)
         {
-            var query = _context.Budgets
-                .Include(b => b.Category)
-                .Where(b => b.UserId == userId);
+            return await _budgetRepository.SearchBudgetsAsync(userId, categoryId, startDate, endDate, minAmount, maxAmount);
+        }
 
-            // Apply search filters if provided
-            if (categoryId.HasValue && categoryId.Value > 0)
+        public async Task<IPagedList<Budget>> GetPagedBudgetsAsync(int pageNumber, int pageSize)
+        {
+            return await _budgetRepository.GetPagedBudgetsAsync(pageNumber, pageSize);
+        }
+
+        public async Task<Budget?> GetBudgetByIdAsync(int id, string userId)
+        {
+            return await _budgetRepository.GetBudgetByIdAsync(id, userId);
+        }
+
+        public async Task<bool> CreateOrUpdateBudgetAsync(Budget budget)
+        {
+            try
             {
-                query = query.Where(b => b.CategoryId == categoryId.Value);
+                return await _budgetRepository.CreateOrUpdateBudgetAsync(budget);
             }
-
-            if (startDate.HasValue)
+            catch (Exception ex)
             {
-                query = query.Where(b => b.Budget_StartDate >= startDate.Value);
+                _logger.LogError(ex, "Error creating/updating budget");
+                return false;
             }
+        }
 
-            if (endDate.HasValue)
+        public async Task<bool> DeleteBudgetAsync(int id, string userId)
+        {
+            try
             {
-                query = query.Where(b => b.Budget_EndDate <= endDate.Value);
+                return await _budgetRepository.DeleteBudgetAsync(id, userId);
             }
-
-            if (minAmount.HasValue)
+            catch (Exception ex)
             {
-                query = query.Where(b => b.BudgetAmount >= minAmount.Value);
+                _logger.LogError(ex, "Error deleting budget");
+                return false;
             }
+        }
 
-            if (maxAmount.HasValue)
-            {
-                query = query.Where(b => b.BudgetAmount <= maxAmount.Value);
-            }
-
-            return await query.OrderByDescending(b => b.Budget_StartDate).ToListAsync();
+        public async Task<List<Category>> GetUserCategoriesAsync(string userId)
+        {
+            return await _budgetRepository.GetUserCategoriesAsync(userId);
         }
     }
 }

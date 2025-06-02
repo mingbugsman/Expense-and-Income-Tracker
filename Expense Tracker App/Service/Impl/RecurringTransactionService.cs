@@ -1,9 +1,6 @@
 ﻿using Expense_Tracker_App.Data;
 using Expense_Tracker_App.Models;
-using Expense_Tracker_App.Enum;
-using Microsoft.EntityFrameworkCore;
-using Syncfusion.EJ2.Spreadsheet;
-using System;
+using Expense_Tracker_App.Repository;
 
 namespace Expense_Tracker_App.Service.Impl
 {
@@ -13,154 +10,56 @@ namespace Expense_Tracker_App.Service.Impl
         private readonly ILogger<RecurringTransactionService> _logger;
         private readonly TimeSpan _interval = TimeSpan.FromSeconds(30); // kiểm tra mỗi phút
         private readonly ApplicationDbContext _context;
+        private readonly IRecurringTransactionRepository _recurringTransactionRepository;
 
         public RecurringTransactionService(
             IServiceScopeFactory serviceScopeFactory,
             ILogger<RecurringTransactionService> logger,
-            ApplicationDbContext context)
+            ApplicationDbContext context,
+            IRecurringTransactionRepository recurringTransactionRepository)
         {
             _serviceScopeFactory = serviceScopeFactory;
             _logger = logger;
             _context = context;
+            _recurringTransactionRepository = recurringTransactionRepository;
         }
 
         public async Task<List<RecurringTransaction>> GetUserRecurringTransactionsAsync(string userId)
         {
-            return await _context.RecurringTransactions
-                .Include(r => r.Category)
-                .Where(r => r.UserId == userId)
-                .OrderByDescending(r => r.StartDate)
-                .ToListAsync();
+            return await _recurringTransactionRepository.GetUserRecurringTransactionsAsync(userId);
         }
 
         public async Task<RecurringTransaction?> GetRecurringTransactionByIdAsync(int id, string userId)
         {
-            return await _context.RecurringTransactions
-                .Include(r => r.Category)
-                .FirstOrDefaultAsync(r => r.RecurringTransactionId == id && r.UserId == userId);
+            return await _recurringTransactionRepository.GetRecurringTransactionByIdAsync(id, userId);
         }
 
         public async Task AddRecurringTransactionAsync(RecurringTransaction transaction)
         {
-            _context.Add(transaction);
-            await _context.SaveChangesAsync();
+            await _recurringTransactionRepository.AddRecurringTransactionAsync(transaction);
         }
 
         public async Task UpdateRecurringTransactionAsync(RecurringTransaction transaction)
         {
-            var existingTransaction = await GetRecurringTransactionByIdAsync(transaction.RecurringTransactionId, transaction.UserId);
-            if (existingTransaction != null)
-            {
-                _context.Entry(existingTransaction).CurrentValues.SetValues(transaction);
-                await _context.SaveChangesAsync();
-            }
+            await _recurringTransactionRepository.UpdateRecurringTransactionAsync(transaction);
         }
 
         public async Task<bool> DeleteRecurringTransactionAsync(int id, string userId)
         {
-            var transaction = await GetRecurringTransactionByIdAsync(id, userId);
-            if (transaction == null)
-                return false;
-
-            _context.RecurringTransactions.Remove(transaction);
-            await _context.SaveChangesAsync();
-            return true;
+            return await _recurringTransactionRepository.DeleteRecurringTransactionAsync(id, userId);
         }
 
         public async Task<List<RecurringTransaction>> SearchRecurringTransactionsAsync(
-            string userId, 
-            string? searchTerm, 
-            int? categoryId, 
+            string userId,
+            string? searchTerm,
+            int? categoryId,
             string? frequency,
-            DateTime? startDate, 
-            DateTime? endDate, 
-            decimal? minAmount, 
+            DateTime? startDate,
+            DateTime? endDate,
+            decimal? minAmount,
             decimal? maxAmount)
         {
-            var query = _context.RecurringTransactions
-                .Include(r => r.Category)
-                .Where(r => r.UserId == userId);
-
-            // Apply search filters if provided
-            if (!string.IsNullOrWhiteSpace(searchTerm))
-            {
-                query = query.Where(r => r.Note.Contains(searchTerm));
-            }
-
-            if (categoryId.HasValue && categoryId.Value > 0)
-            {
-                query = query.Where(r => r.CategoryId == categoryId.Value);
-            }
-
-            if (!string.IsNullOrEmpty(frequency))
-            {
-                Console.WriteLine("Input frequency value: " + frequency);
-                Console.WriteLine("Input frequency type: " + frequency.GetType());
-
-                // Map frequency names to their enum values
-                int frequencyValue = frequency.ToLower() switch
-                {
-                    "daily" => (int)FrequencyType.Daily,
-                    "weekly" => (int)FrequencyType.Weekly,
-                    "monthly" => (int)FrequencyType.Monthly,
-                    "yearly" => (int)FrequencyType.Yearly,
-                    "custom" => (int)FrequencyType.Custom,
-                    _ => -1
-                };
-
-                if (frequencyValue != -1)
-                {
-                    Console.WriteLine("Mapped frequency value: " + frequencyValue);
-                    Console.WriteLine("Mapped frequency type: " + frequencyValue.GetType());
-
-
-
-                    query = query.Where(r => (int)r.Frequency == frequencyValue);
-
-                    Console.WriteLine("Sample transaction frequencies: " + string.Join(", ", query.Take(5).Select(r => r.Frequency)));
-                } 
-            else
-            {
-                Console.WriteLine("Invalid frequency value: " + frequency);
-            }
-            }
-
-            if (startDate.HasValue)
-            {
-                query = query.Where(r => r.StartDate >= startDate.Value);
-            }
-
-            if (endDate.HasValue)
-            {
-                query = query.Where(r => r.EndDate <= endDate.Value || r.EndDate == null);
-            }
-
-            if (minAmount.HasValue)
-            {
-                query = query.Where(r => r.Amount >= minAmount.Value);
-            }
-
-            if (maxAmount.HasValue)
-            {
-                query = query.Where(r => r.Amount <= maxAmount.Value);
-            }
-
-            return await query
-                .OrderByDescending(r => r.StartDate)
-                .Select(r => new RecurringTransaction
-                {
-                    RecurringTransactionId = r.RecurringTransactionId,
-                    Amount = r.Amount,
-                    StartDate = r.StartDate,
-                    EndDate = r.EndDate,
-                    Frequency = r.Frequency,
-                    CustomIntervalDays = r.CustomIntervalDays,
-                    Note = r.Note,
-                    CategoryId = r.CategoryId,
-                    Category = r.Category,
-                    UserId = r.UserId
-                })
-                .ToListAsync();
+            return await _recurringTransactionRepository.SearchRecurringTransactionsAsync(userId, searchTerm, categoryId, frequency, startDate, endDate, minAmount, maxAmount);
         }
     }
 }

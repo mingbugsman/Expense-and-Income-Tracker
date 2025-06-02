@@ -63,5 +63,19 @@ namespace Expense_Tracker_App.Service.Impl
 
             _context.SaveChanges();
         }
+
+        public async Task<int> GetUnreadCountAsync(string userId)
+        {
+            return await _context.NotificationLogs
+                .AsNoTracking()
+                .CountAsync(log => log.UserId == userId && !log.IsRead);
+        }
+
+        public NotificationLog? GetNotificationLogById(int id, string userId)
+        {
+            return _context.NotificationLogs
+                .AsNoTracking()
+                .FirstOrDefault(log => log.Log_Id == id && log.UserId == userId);
+        }
     }
 }

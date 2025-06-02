@@ -1,12 +1,9 @@
 ﻿using Expense_Tracker_App.Data;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Expense_Tracker_App.Models;
-using System.Globalization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using static Expense_Tracker_App.Controllers.DashBoardController;
-
+using Expense_Tracker_App.Service;
 namespace Expense_Tracker_App.Controllers
 {
     [Authorize]
@@ -14,6 +11,7 @@ namespace Expense_Tracker_App.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IDashBoardService _dashBoardService;
 
         public class SpineChartData
         {
@@ -22,106 +20,25 @@ namespace Expense_Tracker_App.Controllers
             public decimal Expense { get; set; }
         }
 
-        public DashBoardController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public DashBoardController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IDashBoardService dashBoardService)
         {
             _context = context;
             _userManager = userManager;
+            _dashBoardService = dashBoardService;
         }
 
         private string GetUserId() => _userManager.GetUserId(User);
 
         public async Task<IActionResult> Index()
         {
-            
             string userId = GetUserId();
-            DateTime StartDate = DateTime.Today.AddDays(-6); // 7 ngày trước
-            DateTime EndDate = DateTime.Today.AddDays(1); // Ngày hôm nay
-
-            // Lấy giao dịch của User trong 7 ngày qua
-            List<Transaction> SelectedTransactions = await _context.Transactions
-                .Include(t => t.Category)
-                .Where(t => t.UserId == userId && t.TransactionDate >= StartDate && t.TransactionDate <= EndDate)
-                .ToListAsync();
-            Console.WriteLine(" Income Summary :");
-            foreach (var item in SelectedTransactions)
-            {
-                Console.WriteLine($"Type: {item.Category.Title}, Amount: {item.Amount}");
-            }
-            // Tổng thu nhập
-            decimal TotalIncome = SelectedTransactions
-                .Where(t => t.Category?.Type == "Income")
-                .Sum(t => t.Amount);
-
-            ViewBag.TotalIncome = TotalIncome.ToString("n2");
-
-            // Tổng chi tiêu
-            decimal TotalExpense = SelectedTransactions
-                .Where(t => t.Category?.Type == "Expense")
-                .Sum(t => t.Amount);
-
-            ViewBag.TotalExpense = TotalExpense.ToString("n2");
-
-            // Số dư (Balance)
-            decimal Balance = TotalIncome - TotalExpense;
-            CultureInfo culture = new("vi-VN");
-            ViewBag.Balance = string.Format(culture, "{0:c0}", Balance);
-
-
-            // 🥧 **Doughnut Chart - Chi tiêu theo danh mục**
-            ViewBag.DoughnutChartData = SelectedTransactions
-                .Where(t => t.Category != null && t.Category.Type == "Expense")
-                .GroupBy(t => t.Category!.CategoryId)
-                .Select(g => new
-                {
-                    title = g.First().Category!.Title,
-                    amount = g.Sum(t => t.Amount),
-                    formattedAmount = g.Sum(t => t.Amount).ToString("n2")
-                })
-                .OrderByDescending(g => g.amount)
-                .ToList();
-
-            // 📈 **Spine Chart - Thu nhập & Chi tiêu theo ngày**
-            List<SpineChartData> IncomeSummary = SelectedTransactions
-                .Where(t => t.Category?.Type == "Income" )
-                .GroupBy(t => t.TransactionDate.Date)
-                .Select(g => new SpineChartData { Day = g.Key.ToString("yyyy-MM-dd"), Income = g.Sum(t => t.Amount) })
-                .ToList();
-
-            List<SpineChartData> ExpenseSummary = SelectedTransactions
-                .Where(t => t.Category?.Type == "Expense" )
-                .GroupBy(t => t.TransactionDate.Date)
-                .Select(g => new SpineChartData { Day = g.Key.ToString("yyyy-MM-dd"), Expense = g.Sum(t => t.Amount) })
-                .ToList();
-
-            // Gộp dữ liệu của 7 ngày qua
-            string[] last7Days = Enumerable.Range(0, 7)
-                .Select(i => DateTime.Today.AddDays(-i).ToString("yyyy-MM-dd"))
-                .Reverse()
-                .ToArray();
-
-            ViewBag.SplineChartData = from day in last7Days
-                                      join income in IncomeSummary on day equals income.Day into incomeGroup
-                                      from income in incomeGroup.DefaultIfEmpty()
-                                      join expense in ExpenseSummary on day equals expense.Day into expenseGroup
-                                      from expense in expenseGroup.DefaultIfEmpty()
-                                      select new
-                                      {
-                                          Day = day,
-                                          Income = income?.Income ?? 0,
-                                          Expense = expense?.Expense ?? 0
-                                      };
-
-            Console.WriteLine("Spline Chart Data:");
-            foreach (var item in ViewBag.SplineChartData)
-            {
-                Console.WriteLine($"Day: {item.Day}, Income: {item.Income}, Expense: {item.Expense}");
-            }
-            // 🆕 **Lấy 5 giao dịch gần nhất**
-            ViewBag.RecentTransactions = SelectedTransactions
-                .OrderByDescending(t => t.TransactionDate)
-                .Take(5)
-                .ToList();
-
+            var summary = await _dashBoardService.GetDashBoardSummaryAsync(userId);
+            ViewBag.TotalIncome = summary.TotalIncome.ToString("n2");
+            ViewBag.TotalExpense = summary.TotalExpense.ToString("n2");
+            ViewBag.Balance = summary.Balance;
+            ViewBag.DoughnutChartData = summary.DoughnutChartData;
+            ViewBag.SplineChartData = summary.SplineChartData;
+            ViewBag.RecentTransactions = summary.RecentTransactions;
             return View();
         }
     }

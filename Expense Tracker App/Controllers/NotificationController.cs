@@ -33,10 +33,7 @@ namespace Expense_Tracker_App.Controllers
                 return Json(new { count = 0 });
             }
 
-            var count = await _context.NotificationLogs
-                .Where(n => n.UserId == userId && !n.IsRead)
-                .CountAsync();
-
+            var count = await _notificationLogService.GetUnreadCountAsync(userId);
             return Json(new { count });
         }
 
@@ -52,8 +49,7 @@ namespace Expense_Tracker_App.Controllers
 
         public IActionResult Details(int id)
         {
-            var logs = _notificationLogService.GetNotificationLogsByUserId(_userManager.GetUserId(User));
-            var log = logs.Where(l => l.Log_Id == id).FirstOrDefault();
+            var log = _notificationLogService.GetNotificationLogById(id, _userManager.GetUserId(User));
             if (log == null) 
             {
                 return NotFound();
